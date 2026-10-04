@@ -12,6 +12,6 @@ imageAlt: "- Copper Box Arena"
 category: Sports
 tools: []
 projectUrl: https://www.instagram.com/kyrik17?stkn=bW56OGI3aWMybnhl
-featured: false
+featured: true
 order: 100
 ---
