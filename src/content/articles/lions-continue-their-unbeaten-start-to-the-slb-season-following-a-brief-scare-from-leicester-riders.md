@@ -10,6 +10,7 @@ tags:
   - Basketball
   - SLB
   - Lions
+image: /uploads/file3.jpg
 featured: true
 ---
 Following their intense game against Šiauliai in the EuroCupmidweek, in which they fell short by a narrow margin of merely 3 points, LondonLions put in a solid performance in the first two quarters against LeicesterRiders extending their flawless start in the SLB season to 5. 
