@@ -8,7 +8,7 @@
 # Editing on your own computer needs none of that: see README.md.
 # ======================================================================
 backend:
-  name: github
+  name: git-gateway
   repo: KyriK17/Kyri-Portfolio
   branch: main
   # Uncomment and fill in once your login proxy exists:
