@@ -19,7 +19,9 @@ Joshua O’Garro had 6 of his 15 points in the first quarter tohelp the London L
 
 Their advantage extended to 16, and the score to 43-27, followingthe conclusion of the second quarter thanks to Price’s birthday week heroicswith 19 points, 7 of them being in the second quarter and 8 rebounds across thecourse of the game.  
 
-The Riders really fought for every point as the first halfcame to a close, yet the overpowering physicality of the Lions coupled withtheir defensive unity appeared to be a huge obstacle the Riders attempted toovercome. “Obviously, we’re playing the best defensive team in the league by amile” explained Rob Paternostro.
+The Riders really fought for every point as the first halfcame to a close, yet the overpowering physicality of the Lions coupled withtheir defensive unity appeared to be a huge obstacle the Riders attempted toovercome.
+
+> "Obviously, we’re playing the best defensive team in the league by amile” explained Rob Paternostro.
 
 The third quarter displayed a huge momentum shift driven by theRiders with Johnson, Thomas Hurley and Bernard Pelote, all contributing towardstheir first advantageous quarter. Initially, Johnson reduced their deficit to14 with 8:38 still left to play, yet Price and Morayo Soluade countered hisefforts with a 5 point turnaround. Thomas Hurley’s 3 pointer ultimately endedthe quick passage of play leaving the score at 48-32 with 7:25 to go.
 
