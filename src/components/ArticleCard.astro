@@ -1,0 +1,39 @@
+---
+import { formatDate, type Article } from '../lib/utils';
+
+interface Props {
+  article: Article;
+  /** "lead" makes a large, full-width card for the top story. */
+  variant?: 'default' | 'lead';
+}
+
+const { article, variant = 'default' } = Astro.props;
+const { title, excerpt, category, date, image, imageAlt } = article.data;
+const href = `/articles/${article.id}/`;
+---
+
+<article class:list={['card', variant === 'lead' && 'card-lead', !image && 'card-noimg']}>
+  {
+    image && (
+      <div class="card-media">
+        <img
+          src={image}
+          alt={imageAlt}
+          width="1200"
+          height="800"
+          loading={variant === 'lead' ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      </div>
+    )
+  }
+  <div class="card-body">
+    <p class="meta">
+      <span class="cat">{category}</span>
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+    </p>
+    <h3 class="card-title"><a class="card-link" href={href}>{title}</a></h3>
+    {excerpt && <p class="card-excerpt">{excerpt}</p>}
+    <span class="read-more" aria-hidden="true">Read article</span>
+  </div>
+</article>

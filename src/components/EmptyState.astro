@@ -1,0 +1,14 @@
+---
+/** A quiet message shown when a list has nothing in it yet. */
+interface Props {
+  title: string;
+  text?: string;
+}
+const { title, text } = Astro.props;
+---
+
+<div class="empty-state">
+  <p class="empty-title">{title}</p>
+  {text && <p class="empty-text">{text}</p>}
+  <slot />
+</div>

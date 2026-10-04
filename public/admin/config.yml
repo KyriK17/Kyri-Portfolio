@@ -1,0 +1,225 @@
+# ======================================================================
+# Decap CMS configuration  (the editing screen lives at /admin)
+#
+# BEFORE YOU CAN LOG IN ONLINE you must:
+#   1. Replace `repo:` below with  your-github-username/your-repo-name
+#   2. Set up a GitHub login proxy (see README.md, "Turning on the CMS online")
+#      and put its address in `base_url:`.
+# Editing on your own computer needs none of that: see README.md.
+# ======================================================================
+backend:
+  name: github
+  repo: YOUR-GITHUB-USERNAME/YOUR-REPO-NAME
+  branch: main
+  # Uncomment and fill in once your login proxy exists:
+  # base_url: https://YOUR-LOGIN-PROXY.workers.dev
+
+# Lets you edit at http://localhost:4321/admin/ while `npm run cms` is running.
+local_backend: true
+
+# Optional: turns on a Draft -> In review -> Ready workflow (uses GitHub pull requests).
+# The simple "Draft" checkbox on each article works without this.
+# publish_mode: editorial_workflow
+
+# Uploaded images and files go here; the site finds them at /uploads/...
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  # ====================================================================
+  # ARTICLES
+  # ====================================================================
+  - name: articles
+    label: Articles
+    label_singular: Article
+    description: "Write, edit, hide or delete articles. Tick Draft to keep one private until you are ready."
+    folder: src/content/articles
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{slug}}"
+    summary: "{{title}} · {{date}}"
+    sortable_fields: [date, title, draft]
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Published, field: draft, pattern: false }
+      - { label: Featured, field: featured, pattern: true }
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Subtitle, name: subtitle, widget: string, required: false, hint: "A line under the headline." }
+      - { label: "Draft (hidden from the public site)", name: draft, widget: boolean, default: true, hint: "Leave ticked while you write. Untick it to publish." }
+      - { label: Publication date, name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { label: Author, name: author, widget: string, required: false, hint: "Shown in the byline. Leave blank to hide it." }
+      - { label: Category, name: category, widget: string, hint: "One category per article, for example Culture or Opinion. Spell it the same way each time." }
+      - { label: Tags, name: tags, widget: list, default: [], required: false, hint: "Add as many as you like." }
+      - { label: Featured image, name: image, widget: image, required: false, hint: "Wide images work best (around 1600px across)." }
+      - { label: Featured image description (alt text), name: imageAlt, widget: string, required: false, hint: "Describe the picture for people who cannot see it." }
+      - { label: Excerpt, name: excerpt, widget: text, required: false, hint: "One or two sentences shown on cards and in search." }
+      - { label: Featured article, name: featured, widget: boolean, default: false, hint: "Used on the home page if you choose 'featured articles only' in Homepage settings." }
+      - { label: Web address ending (slug), name: slug, widget: string, required: false, hint: "Optional. Gives the address /articles/<this>/. Leave blank to use the file name." }
+      - { label: Article body, name: body, widget: markdown, hint: "Use ## for headings and > for a pull quote." }
+      - { label: Search title (SEO), name: seoTitle, widget: string, required: false, hint: "Optional. Overrides the title in Google results." }
+      - { label: Search description (SEO), name: seoDescription, widget: text, required: false, hint: "Optional. Overrides the excerpt in Google results." }
+
+  # ====================================================================
+  # PROJECTS
+  # ====================================================================
+  - name: projects
+    label: Projects
+    label_singular: Project
+    description: "Add, edit, reorder, hide or delete projects."
+    folder: src/content/projects
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: [order, title]
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Featured, field: featured, pattern: true }
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: "Draft (hidden from the public site)", name: draft, widget: boolean, default: true, hint: "Untick to publish." }
+      - { label: Short description, name: description, widget: text, required: false }
+      - { label: Image, name: image, widget: image, required: false }
+      - { label: Image description (alt text), name: imageAlt, widget: string, required: false }
+      - { label: Category, name: category, widget: string, required: false }
+      - { label: Tools and methods, name: tools, widget: list, default: [], required: false }
+      - { label: Project URL, name: projectUrl, widget: string, required: false, hint: "Full address starting https://" }
+      - { label: GitHub URL, name: githubUrl, widget: string, required: false, hint: "Full address starting https://" }
+      - { label: Featured project, name: featured, widget: boolean, default: false, hint: "Featured projects appear on the home page." }
+      - { label: Display order, name: order, widget: number, value_type: int, default: 100, hint: "Lower numbers appear first (1, 2, 3...)." }
+      - { label: Web address ending (slug), name: slug, widget: string, required: false, hint: "Optional. Leave blank to use the file name." }
+      - { label: Project page text, name: body, widget: markdown, required: false, hint: "The full write-up shown on the project page." }
+      - { label: Search title (SEO), name: seoTitle, widget: string, required: false }
+      - { label: Search description (SEO), name: seoDescription, widget: text, required: false }
+
+  # ====================================================================
+  # HOMEPAGE
+  # ====================================================================
+  - name: homepage
+    label: Homepage
+    description: "Text and switches for the home page."
+    files:
+      - label: Homepage
+        name: home
+        file: src/data/home.json
+        fields:
+          - { label: Introduction (under the tagline), name: heroIntro, widget: text, required: false, hint: "Two or three sentences. The main tagline is in Site settings." }
+          - { label: About summary, name: aboutSummary, widget: text, required: false, hint: "Shown in the home page About section. Leave blank to use the summary from the About page." }
+          - { label: Contact line, name: contactText, widget: string, required: false, hint: "A short sentence above your email on the home page." }
+          - label: Which articles should the home page show?
+            name: homeArticles
+            widget: select
+            default: latest
+            options:
+              - { label: "The latest three articles", value: latest }
+              - { label: "Only articles marked Featured (falls back to latest)", value: featured }
+          - { label: Show the About section, name: showAbout, widget: boolean, default: true }
+          - { label: Show the Articles section, name: showArticles, widget: boolean, default: true }
+          - { label: Show the Projects section, name: showProjects, widget: boolean, default: true }
+          - { label: Show the Contact section, name: showContact, widget: boolean, default: true }
+
+  # ====================================================================
+  # ABOUT PAGE
+  # ====================================================================
+  - name: about
+    label: About page
+    files:
+      - label: About page
+        name: about
+        file: src/content/about/about.md
+        fields:
+          - { label: Page title, name: title, widget: string, default: About }
+          - { label: Headline, name: headline, widget: text, required: false, hint: "The large sentence at the top of the page." }
+          - { label: Short summary, name: summary, widget: text, required: false, hint: "Used on the home page and in search results." }
+          - { label: Profile image, name: profileImage, widget: image, required: false, hint: "A portrait about 800 x 1000px works well." }
+          - { label: Profile image description (alt text), name: profileImageAlt, widget: string, required: false }
+          - { label: Biography, name: body, widget: markdown, required: false }
+          - label: Education
+            name: education
+            widget: list
+            required: false
+            summary: "{{fields.institution}}"
+            hint: "Add one entry for each school, college or university."
+            fields:
+              - { label: Institution, name: institution, widget: string }
+              - { label: Qualification, name: qualification, widget: string, required: false }
+              - { label: Years, name: years, widget: string, required: false, hint: "For example 2022 – 2025" }
+              - { label: Details, name: details, widget: text, required: false }
+          - { label: Interests, name: interests, widget: list, default: [], required: false }
+          - label: Skills
+            name: skills
+            widget: list
+            required: false
+            summary: "{{fields.group}}"
+            hint: "Add one group for each kind of skill."
+            fields:
+              - { label: Group name, name: group, widget: string }
+              - { label: Skills in this group, name: items, widget: list, default: [] }
+
+  # ====================================================================
+  # SITE SETTINGS, SOCIAL LINKS, CONTACT, CV
+  # ====================================================================
+  - name: settings
+    label: Site settings
+    files:
+      - label: Name, contact, social links and CV
+        name: site
+        file: src/data/site.json
+        fields:
+          - { label: Name, name: name, widget: string, hint: "Shown as the large title on the home page and in the header." }
+          - { label: Main tagline, name: tagline, widget: string, required: false, hint: "Shown on the home page and in the footer." }
+          - { label: Contact email, name: email, widget: string, required: false, hint: "Leave blank to hide all email links." }
+          - { label: Instagram URL, name: instagram, widget: string, required: false, hint: "Full address, for example https://www.instagram.com/yourname/ . Blank hides the icon." }
+          - { label: LinkedIn URL, name: linkedin, widget: string, required: false }
+          - { label: X / Twitter URL, name: x, widget: string, required: false }
+          - { label: GitHub URL, name: github, widget: string, required: false }
+          - { label: CV (PDF), name: cv, widget: file, required: false, hint: "Upload a PDF. Blank hides every CV button." }
+
+  - name: navigation
+    label: Navigation
+    files:
+      - label: Navigation menu
+        name: navigation
+        file: src/data/navigation.json
+        fields:
+          - label: Menu links
+            name: items
+            widget: list
+            summary: "{{fields.label}}"
+            hint: "Drag to reorder. Untick 'Show' to hide a link. Keep Home, About, Articles, Projects and Contact unless you have a reason."
+            fields:
+              - { label: Label, name: label, widget: string }
+              - { label: "Address (for example /about/ or https://...)", name: href, widget: string }
+              - { label: Show in menu, name: show, widget: boolean, default: true }
+
+  - name: seo
+    label: SEO (search and sharing)
+    files:
+      - label: SEO
+        name: seo
+        file: src/data/seo.json
+        fields:
+          - { label: Default site description, name: defaultDescription, widget: text, required: false, hint: "Used by Google when a page has no description of its own." }
+          - { label: Default sharing image, name: ogImage, widget: image, required: false, hint: "Shown when the site is shared on social media. Use JPG or PNG (1200 x 630px)." }
+          - { label: Home page title, name: homeTitle, widget: string, required: false }
+          - { label: Home page description, name: homeDescription, widget: text, required: false }
+          - { label: About page description, name: aboutDescription, widget: text, required: false }
+          - { label: Articles page description, name: articlesDescription, widget: text, required: false }
+          - { label: Projects page description, name: projectsDescription, widget: text, required: false }
+          - { label: Contact page description, name: contactDescription, widget: text, required: false }
+
+  - name: pagetext
+    label: Page introductions
+    files:
+      - label: Short intros under page titles
+        name: pages
+        file: src/data/pages.json
+        fields:
+          - { label: Articles page intro, name: articlesIntro, widget: text, required: false }
+          - { label: Projects page intro, name: projectsIntro, widget: text, required: false }
+          - { label: Contact page intro, name: contactIntro, widget: text, required: false }

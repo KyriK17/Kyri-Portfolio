@@ -1,0 +1,157 @@
+---
+import { getEntry, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import EmptyState from '../components/EmptyState.astro';
+import { seo, site, socials } from '../lib/site';
+
+const about = await getEntry('about', 'about');
+const data = about?.data;
+
+const title = data?.title || 'About';
+const headline = data?.headline ?? '';
+const summary = data?.summary ?? '';
+const profileImage = data?.profileImage ?? '';
+const profileImageAlt = data?.profileImageAlt ?? '';
+const education = data?.education ?? [];
+const interests = data?.interests ?? [];
+const skills = data?.skills ?? [];
+
+const hasBio = Boolean(about?.body && about.body.trim());
+const Content = about && hasBio ? (await render(about)).Content : null;
+
+const hasSidebar = Boolean(profileImage || site.cv || socials.length > 0);
+const hasElsewhere = Boolean(site.email || socials.length > 0);
+const hasAnything = Boolean(
+  headline || summary || profileImage || hasBio || education.length || interests.length || skills.length,
+);
+---
+
+<Layout
+  title={title}
+  description={seo.aboutDescription || summary || undefined}
+  image={profileImage || undefined}
+>
+  <section class="wrap pt-14 pb-24 md:pt-20 md:pb-32">
+    <header class="max-w-4xl">
+      {
+        headline ? (
+          <>
+            <h1 class="sr-only">{title}</h1>
+            <p class="display text-4xl md:text-6xl">{headline}</p>
+          </>
+        ) : (
+          <h1 class="display text-5xl md:text-7xl">{title}</h1>
+        )
+      }
+    </header>
+
+    {!hasAnything && !hasSidebar && (
+      <div class="mt-12">
+        <EmptyState title="Nothing here yet." />
+      </div>
+    )}
+
+    {
+      (hasAnything || hasSidebar) && (
+        <div class="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-20">
+          {hasSidebar && (
+            <div class="lg:col-span-4">
+              <div class="max-w-sm lg:sticky lg:top-28 lg:max-w-none">
+                {profileImage && (
+                  <img
+                    class="portrait"
+                    src={profileImage}
+                    alt={profileImageAlt}
+                    width="800"
+                    height="1000"
+                    loading="eager"
+                    decoding="async"
+                  />
+                )}
+                {site.cv && (
+                  <div class:list={['flex flex-wrap items-center gap-3', profileImage && 'mt-6']}>
+                    <a class="btn btn-primary btn-sm" href={site.cv} target="_blank" rel="noopener">
+                      Download CV
+                    </a>
+                  </div>
+                )}
+                {socials.length > 0 && <SocialLinks class="mt-5" />}
+              </div>
+            </div>
+          )}
+
+          <div class:list={['grid content-start gap-16', hasSidebar ? 'lg:col-span-8' : 'lg:col-span-12 max-w-3xl']}>
+            {Content && (
+              <div class="prose-editorial mx-0">
+                <Content />
+              </div>
+            )}
+
+            {education.length > 0 && (
+              <section aria-labelledby="education-title">
+                <SectionHeading title="Education" id="education-title" />
+                <div>
+                  {education.map((item) => (
+                    <div class="timeline-item">
+                      <p class="text-sm text-mute">{item.years}</p>
+                      <div>
+                        <h3 class="font-serif text-2xl leading-tight">{item.institution}</h3>
+                        {item.qualification && <p class="mt-1 text-paper/85">{item.qualification}</p>}
+                        {item.details && <p class="mt-2 max-w-xl text-mute">{item.details}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {interests.length > 0 && (
+              <section aria-labelledby="interests-title">
+                <SectionHeading title="Interests" id="interests-title" />
+                <ul class="chips">
+                  {interests.map((interest) => (
+                    <li class="chip">{interest}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {skills.length > 0 && (
+              <section aria-labelledby="skills-title">
+                <SectionHeading title="Skills" id="skills-title" />
+                <div class="grid gap-8 sm:grid-cols-2">
+                  {skills.map((group) => (
+                    <div>
+                      <h3 class="font-serif text-xl">{group.group}</h3>
+                      {group.items.length > 0 && (
+                        <ul class="mt-3 grid gap-1 text-paper/80">
+                          {group.items.map((item) => (
+                            <li>{item}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {hasElsewhere && (
+              <section aria-labelledby="elsewhere-title">
+                <SectionHeading title="Find me elsewhere" id="elsewhere-title" />
+                {socials.length > 0 && <SocialLinks showLabels />}
+                {site.email && (
+                  <p class:list={[socials.length > 0 && 'mt-6', 'text-mute']}>
+                    Or write to <a class="link-line text-paper" href={`mailto:${site.email}`}>{site.email}</a>.
+                  </p>
+                )}
+              </section>
+            )}
+          </div>
+        </div>
+      )
+    }
+  </section>
+</Layout>

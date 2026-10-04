@@ -1,0 +1,32 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { getProjects } from '../../lib/utils';
+import { pageText, seo } from '../../lib/site';
+
+const projects = await getProjects();
+---
+
+<Layout title="Projects" description={seo.projectsDescription || undefined}>
+  <section class="wrap pt-14 pb-24 md:pt-20 md:pb-32">
+    <header>
+      <h1 class="display text-5xl md:text-7xl">Projects</h1>
+      {pageText.projectsIntro && <p class="lead mt-5">{pageText.projectsIntro}</p>}
+    </header>
+
+    {
+      projects.length > 0 ? (
+        <div class="card-grid mt-14">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      ) : (
+        <div class="mt-12">
+          <EmptyState title="No projects yet." />
+        </div>
+      )
+    }
+  </section>
+</Layout>

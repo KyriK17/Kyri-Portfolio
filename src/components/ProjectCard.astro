@@ -1,0 +1,36 @@
+---
+import type { Project } from '../lib/utils';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, description, category, image, imageAlt, tools } = project.data;
+const href = `/projects/${project.id}/`;
+---
+
+<article class:list={['card', !image && 'card-noimg']}>
+  {
+    image && (
+      <div class="card-media">
+        <img src={image} alt={imageAlt} width="1200" height="800" loading="lazy" decoding="async" />
+      </div>
+    )
+  }
+  <div class="card-body">
+    {category && <p class="meta"><span class="cat">{category}</span></p>}
+    <h3 class="card-title"><a class="card-link" href={href}>{title}</a></h3>
+    {description && <p class="card-excerpt">{description}</p>}
+    {
+      tools.length > 0 && (
+        <ul class="chips mt-4">
+          {tools.slice(0, 4).map((tool) => (
+            <li class="chip">{tool}</li>
+          ))}
+        </ul>
+      )
+    }
+    <span class="read-more" aria-hidden="true">View project</span>
+  </div>
+</article>

@@ -1,0 +1,48 @@
+---
+interface Props {
+  current: number;
+  total: number;
+  /** The listing URL without a trailing slash, for example "/articles". */
+  base: string;
+}
+
+const { current, total, base } = Astro.props;
+const href = (n: number) => (n === 1 ? `${base}/` : `${base}/page/${n}/`);
+const pages = Array.from({ length: total }, (_, i) => i + 1);
+---
+
+{
+  total > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      <ul>
+        {current > 1 && (
+          <li>
+            <a class="page-link" href={href(current - 1)} rel="prev">
+              Previous
+            </a>
+          </li>
+        )}
+        {pages.map((n) => (
+          <li>
+            {n === current ? (
+              <span class="page-link" aria-current="page">
+                <span class="sr-only">Page </span>{n}
+              </span>
+            ) : (
+              <a class="page-link" href={href(n)}>
+                <span class="sr-only">Page </span>{n}
+              </a>
+            )}
+          </li>
+        ))}
+        {current < total && (
+          <li>
+            <a class="page-link" href={href(current + 1)} rel="next">
+              Next
+            </a>
+          </li>
+        )}
+      </ul>
+    </nav>
+  )
+}

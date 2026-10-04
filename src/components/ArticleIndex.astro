@@ -1,0 +1,226 @@
+---
+/**
+ * The body of every article listing page (all articles, one category, one tag).
+ * Includes search, category filters, tag filters, the article grid and pagination.
+ */
+import ArticleCard from './ArticleCard.astro';
+import Pagination from './Pagination.astro';
+import EmptyState from './EmptyState.astro';
+import { getArticles, getTaxonomy, type Article } from '../lib/utils';
+
+interface Props {
+  heading: string;
+  intro?: string;
+  articles: Article[];
+  /** Slug of the category being viewed, if any. */
+  activeCategory?: string;
+  /** Slug of the tag being viewed, if any. */
+  activeTag?: string;
+  pagination?: { current: number; total: number; base: string };
+}
+
+const { heading, intro, articles, activeCategory, activeTag, pagination } = Astro.props;
+
+const everything = await getArticles();
+const { categories, tags } = getTaxonomy(everything);
+
+// The first article on page 1 of the main list becomes a large "lead story".
+const showLead = !activeCategory && !activeTag && (!pagination || pagination.current === 1);
+---
+
+<section class="wrap pt-14 pb-24 md:pt-20 md:pb-32">
+  <header>
+    <h1 class="display text-5xl md:text-7xl">{heading}</h1>
+    {intro && <p class="lead mt-5">{intro}</p>}
+  </header>
+
+  {
+    everything.length === 0 ? (
+      <div class="mt-12"><EmptyState title="No articles yet." /></div>
+    ) : (
+      <>
+  <form id="article-search" class="search mt-10" role="search" action="/articles/" method="get">
+    <label for="article-search-input" class="sr-only">Search articles</label>
+    <input
+      id="article-search-input"
+      name="q"
+      type="search"
+      placeholder="Search articles"
+      autocomplete="off"
+    />
+  </form>
+
+  <div class="mt-8 grid gap-4">
+    <div class="filter-row">
+      <p class="filter-label" id="filter-category">Category</p>
+      <nav aria-labelledby="filter-category">
+        <ul class="filters">
+          <li>
+            <a
+              class="filter"
+              href="/articles/"
+              aria-current={!activeCategory && !activeTag ? 'page' : undefined}>All</a
+            >
+          </li>
+          {
+            categories.map((c) => (
+              <li>
+                <a
+                  class="filter"
+                  href={`/articles/category/${c.slug}/`}
+                  aria-current={activeCategory === c.slug ? 'page' : undefined}
+                >
+                  {c.name} <span class="filter-count">{c.count}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    {
+      tags.length > 0 && (
+        <div class="filter-row">
+          <p class="filter-label" id="filter-tag">Tag</p>
+          <nav aria-labelledby="filter-tag">
+            <ul class="filters">
+              {tags.map((t) => (
+                <li>
+                  <a
+                    class="filter"
+                    href={`/articles/tag/${t.slug}/`}
+                    aria-current={activeTag === t.slug ? 'page' : undefined}
+                  >
+                    {t.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )
+    }
+  </div>
+
+  <div id="search-results" class="mt-12" aria-live="polite" hidden></div>
+
+  <div id="article-list" class="mt-12">
+    {
+      articles.length > 0 ? (
+        <div class="card-grid">
+          {articles.map((article, index) => (
+            <ArticleCard article={article} variant={showLead && index === 0 ? 'lead' : 'default'} />
+          ))}
+        </div>
+      ) : (
+        <p class="lead">No articles here yet. Check back soon.</p>
+      )
+    }
+    {pagination && <Pagination {...pagination} />}
+  </div>
+      </>
+    )
+  }
+</section>
+
+<script>
+  // Search: loads a small JSON file the first time someone types, then filters it in the browser.
+  type SearchItem = {
+    title: string;
+    subtitle: string;
+    excerpt: string;
+    category: string;
+    tags: string[];
+    url: string;
+    date: string;
+  };
+
+  const form = document.getElementById('article-search') as HTMLFormElement | null;
+  const input = document.getElementById('article-search-input') as HTMLInputElement | null;
+  const list = document.getElementById('article-list');
+  const results = document.getElementById('search-results');
+
+  if (form && input && list && results) {
+    let index: SearchItem[] | null = null;
+    let timer: number | undefined;
+
+    const load = async (): Promise<SearchItem[]> => {
+      if (!index) {
+        const response = await fetch('/search.json');
+        index = (await response.json()) as SearchItem[];
+      }
+      return index;
+    };
+
+    const render = (items: SearchItem[]) => {
+      results.replaceChildren();
+
+      const count = document.createElement('p');
+      count.className = 'text-sm text-mute mb-4';
+      count.textContent =
+        items.length === 0
+          ? 'No articles match your search.'
+          : `${items.length} ${items.length === 1 ? 'article' : 'articles'} found`;
+      results.append(count);
+
+      for (const item of items) {
+        const row = document.createElement('article');
+        row.className = 'result';
+
+        const cat = document.createElement('p');
+        cat.className = 'cat';
+        cat.textContent = item.category;
+
+        const heading = document.createElement('h3');
+        const link = document.createElement('a');
+        link.href = item.url;
+        link.className = 'link-line';
+        link.textContent = item.title;
+        heading.append(link);
+
+        const excerpt = document.createElement('p');
+        excerpt.textContent = item.excerpt;
+
+        row.append(cat, heading, excerpt);
+        results.append(row);
+      }
+    };
+
+    const run = async () => {
+      const query = input.value.trim().toLowerCase();
+      if (!query) {
+        results.hidden = true;
+        list.hidden = false;
+        return;
+      }
+      const data = await load();
+      const terms = query.split(/\s+/);
+      const matches = data.filter((item) => {
+        const haystack = [item.title, item.subtitle, item.excerpt, item.category, ...item.tags]
+          .join(' ')
+          .toLowerCase();
+        return terms.every((term) => haystack.includes(term));
+      });
+      render(matches);
+      results.hidden = false;
+      list.hidden = true;
+    };
+
+    input.addEventListener('input', () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(run, 150);
+    });
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      run();
+    });
+
+    // Support links such as /articles/?q=film
+    const initial = new URLSearchParams(window.location.search).get('q');
+    if (initial) {
+      input.value = initial;
+      run();
+    }
+  }
+</script>

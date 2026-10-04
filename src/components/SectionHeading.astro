@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  /** Optional section number, for example "01". */
+  number?: string;
+  id?: string;
+  /** Optional link on the right-hand side. */
+  href?: string;
+  linkLabel?: string;
+}
+
+const { title, number, id, href, linkLabel } = Astro.props;
+---
+
+<div class="section-head-row">
+  <h2 class="section-head" id={id}>
+    {number && <span class="section-num" aria-hidden="true">{number} —</span>}
+    <span>{title}</span>
+  </h2>
+  <span class="section-rule" aria-hidden="true"></span>
+  {href && linkLabel && <a class="section-link link-line" href={href}>{linkLabel}</a>}
+</div>

@@ -1,0 +1,43 @@
+---
+import { site, nav } from '../lib/site';
+import SocialLinks from './SocialLinks.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr] md:gap-16">
+      <div>
+        {site.name && <p class="font-serif text-3xl font-bold tracking-wide text-paper">{site.name}</p>}
+        {site.tagline && <p class="mt-3 max-w-xs text-sm">{site.tagline}</p>}
+      </div>
+
+      <nav aria-label="Footer">
+        <ul class="grid gap-2 text-sm">
+          {
+            nav.map((item) => (
+              <li>
+                <a class="footer-link" href={item.href}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div>
+        {site.email && <a class="footer-link text-sm" href={`mailto:${site.email}`}>{site.email}</a>}
+        <SocialLinks class={site.email ? 'mt-4' : ''} />
+      </div>
+    </div>
+
+    <div
+      class="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6 text-xs"
+    >
+      <p>&copy; {year}{site.name ? ` ${site.name}` : ''}. All rights reserved.</p>
+      <a class="footer-link" href="#main">Back to top</a>
+    </div>
+  </div>
+</footer>

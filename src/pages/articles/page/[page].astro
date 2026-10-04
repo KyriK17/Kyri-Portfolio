@@ -1,0 +1,38 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '../../../layouts/Layout.astro';
+import ArticleIndex from '../../../components/ArticleIndex.astro';
+import { getArticles } from '../../../lib/utils';
+import { PAGE_SIZE, seo } from '../../../lib/site';
+
+// Page 1 lives at /articles/, so this file builds pages 2, 3, 4...
+export const getStaticPaths = (async () => {
+  const articles = await getArticles();
+  const total = Math.ceil(articles.length / PAGE_SIZE);
+
+  return Array.from({ length: Math.max(total - 1, 0) }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { page: String(page) },
+      props: {
+        page,
+        total,
+        items: articles.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+      },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { page, total, items } = Astro.props;
+---
+
+<Layout
+  title={`Articles – page ${page}`}
+  description={seo.articlesDescription || undefined}
+>
+  <ArticleIndex
+    heading="Articles"
+    articles={items}
+    pagination={{ current: page, total, base: '/articles' }}
+  />
+</Layout>

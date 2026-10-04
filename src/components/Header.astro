@@ -1,0 +1,77 @@
+---
+import { site, nav } from '../lib/site';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="wrap header-row">
+    {
+      site.name ? (
+        <a class="logo" href="/" aria-label={`${site.name} – home`}>
+          {site.name}
+        </a>
+      ) : (
+        <a class="logo" href="/">Home</a>
+      )
+    }
+
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      <span class="sr-only">Menu</span>
+      <span class="bars" aria-hidden="true"></span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <ul class="nav-list">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                class="nav-link"
+                href={item.href}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        site.cv && (
+          <a class="btn btn-ghost btn-sm" href={site.cv} target="_blank" rel="noopener">
+            CV
+          </a>
+        )
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Tiny script: opens and closes the menu on small screens.
+  const button = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const menu = document.getElementById('site-nav');
+
+  if (button && menu) {
+    const setOpen = (open: boolean) => {
+      button.setAttribute('aria-expanded', String(open));
+      menu.dataset.open = String(open);
+    };
+    button.addEventListener('click', () => {
+      setOpen(button.getAttribute('aria-expanded') !== 'true');
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    });
+    menu.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) setOpen(false);
+    });
+  }
+</script>

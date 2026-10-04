@@ -1,0 +1,30 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ArticleIndex from '../../../components/ArticleIndex.astro';
+import { getArticles, getTaxonomy, slugify } from '../../../lib/utils';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  const { tags } = getTaxonomy(articles);
+
+  return tags.map((tag) => ({
+    params: { tag: tag.slug },
+    props: {
+      name: tag.name,
+      items: articles.filter((a) => a.data.tags.some((t) => slugify(t) === tag.slug)),
+    },
+  }));
+}
+
+const { tag } = Astro.params;
+const { name, items } = Astro.props;
+---
+
+<Layout title={`Articles tagged ${name}`} description={`All articles tagged ${name}.`}>
+  <ArticleIndex
+    heading={`Tagged: ${name}`}
+    intro={`Articles that mention ${name}.`}
+    articles={items}
+    activeTag={tag}
+  />
+</Layout>

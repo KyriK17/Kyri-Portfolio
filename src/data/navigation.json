@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "label": "Home", "href": "/", "show": true },
+    { "label": "About", "href": "/about/", "show": true },
+    { "label": "Articles", "href": "/articles/", "show": true },
+    { "label": "Projects", "href": "/projects/", "show": true },
+    { "label": "Contact", "href": "/contact/", "show": true }
+  ]
+}

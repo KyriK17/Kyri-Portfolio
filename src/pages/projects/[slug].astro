@@ -1,0 +1,98 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { getProjects } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const {
+  title,
+  description,
+  image,
+  imageAlt,
+  category,
+  tools,
+  projectUrl,
+  githubUrl,
+  seoTitle,
+  seoDescription,
+} = project.data;
+const hasBody = Boolean(project.body && project.body.trim());
+---
+
+<Layout
+  title={seoTitle || title}
+  description={seoDescription || description || undefined}
+  image={image || undefined}
+>
+  <article>
+    <header class="wrap pt-12 md:pt-20">
+      <a class="link-line text-sm text-mute hover:text-paper" href="/projects/">All projects</a>
+      {category && <p class="cat mt-8">{category}</p>}
+      <h1 class:list={['article-title', category ? 'mt-4' : 'mt-8']}>{title}</h1>
+      {description && <p class="article-sub mt-6">{description}</p>}
+
+      {
+        (tools.length > 0 || projectUrl || githubUrl) && (
+          <dl class="byline mt-10">
+            {tools.length > 0 && (
+              <div>
+                <dt>Tools and methods</dt>
+                <dd>
+                  <ul class="chips mt-2">
+                    {tools.map((tool) => (
+                      <li class="chip">{tool}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )}
+            {(projectUrl || githubUrl) && (
+              <div>
+                <dt>Links</dt>
+                <dd class="mt-2 flex flex-wrap gap-3">
+                  {projectUrl && (
+                    <a class="btn btn-primary btn-sm" href={projectUrl} target="_blank" rel="noopener noreferrer">
+                      Visit project
+                    </a>
+                  )}
+                  {githubUrl && (
+                    <a class="btn btn-ghost btn-sm" href={githubUrl} target="_blank" rel="noopener noreferrer">
+                      View on GitHub
+                    </a>
+                  )}
+                </dd>
+              </div>
+            )}
+          </dl>
+        )
+      }
+    </header>
+
+    {
+      image && (
+        <figure class="wrap article-figure mt-10 md:mt-14">
+          <img src={image} alt={imageAlt} width="1200" height="800" loading="eager" decoding="async" fetchpriority="high" />
+        </figure>
+      )
+    }
+
+    <div class="wrap mt-12 pb-24 md:mt-16 md:pb-32">
+      {
+        hasBody && (
+          <div class="prose-editorial">
+            <Content />
+          </div>
+        )
+      }
+    </div>
+  </article>
+</Layout>

@@ -1,0 +1,56 @@
+---
+/**
+ * All the <head> tags that matter for search engines and social sharing:
+ * title, description, canonical URL, Open Graph and Twitter/X cards.
+ */
+import { site } from '../lib/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description: pageDescription,
+  image,
+  type = 'website',
+  publishedTime,
+  noindex = false,
+} = Astro.props;
+
+const description = pageDescription || site.description;
+const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// Social networks cannot show SVG images, so SVG images fall back to a PNG.
+const usable = (path?: string) => (path && !path.toLowerCase().endsWith('.svg') ? path : '');
+const ogPath = usable(image) || usable(site.ogImage) || '/og-default.png';
+const ogImage = new URL(ogPath, Astro.site).href;
+
+const xHandle = site.x ? '@' + site.x.replace(/\/+$/, '').split('/').pop() : '';
+---
+
+<title>{fullTitle}</title>
+{description && <meta name="description" content={description} />}
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+
+<meta property="og:site_name" content={site.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:locale" content="en_GB" />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+{description && <meta name="twitter:description" content={description} />}
+<meta name="twitter:image" content={ogImage} />
+{xHandle && <meta name="twitter:site" content={xHandle} />}

@@ -1,0 +1,26 @@
+{
+  "name": "kyri-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Editorial portfolio and writing website built with Astro, Tailwind CSS and Decap CMS.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "cms": "npx decap-server"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.0",
+    "@fontsource-variable/instrument-sans": "^5.0.0",
+    "@fontsource-variable/newsreader": "^5.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "astro": "^5.0.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "typescript": "^5.6.0"
+  }
+}

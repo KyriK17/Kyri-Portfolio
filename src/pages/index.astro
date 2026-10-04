@@ -1,0 +1,195 @@
+---
+import { getEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { getArticles, getProjects } from '../lib/utils';
+import { home, seo, site, socials } from '../lib/site';
+
+// ---- Articles: latest, or only those marked "featured" (chosen in Homepage settings) ----
+const allArticles = await getArticles();
+const featuredArticles = allArticles.filter((a) => a.data.featured);
+const latest = (
+  home.articlesMode === 'featured' && featuredArticles.length > 0 ? featuredArticles : allArticles
+).slice(0, 3);
+
+// ---- Projects: those marked "featured", or all of them if none are marked ----
+const allProjects = await getProjects();
+const featuredProjects = allProjects.filter((p) => p.data.featured);
+const projects = (featuredProjects.length > 0 ? featuredProjects : allProjects).slice(0, 3);
+
+// ---- About ----
+const about = await getEntry('about', 'about');
+const aboutSummary = home.aboutSummary || about?.data.summary || '';
+const aboutImage = about?.data.profileImage || '';
+const aboutImageAlt = about?.data.profileImageAlt || '';
+
+// ---- Which sections have something to show? Empty ones are hidden. ----
+const show = {
+  about: home.showAbout && Boolean(aboutSummary || aboutImage),
+  articles: home.showArticles && latest.length > 0,
+  projects: home.showProjects && projects.length > 0,
+  contact: home.showContact && Boolean(site.email || socials.length > 0 || home.contactText),
+};
+
+// Visible sections are numbered 01, 02, 03... in order, with no gaps.
+let counter = 0;
+const number = (visible: boolean) => (visible ? String(++counter).padStart(2, '0') : '');
+const num = {
+  about: number(show.about),
+  articles: number(show.articles),
+  projects: number(show.projects),
+  contact: number(show.contact),
+};
+
+const hasHeroText = Boolean(site.tagline || home.heroIntro);
+const showHeroButtons = allArticles.length > 0 || allProjects.length > 0;
+
+const title = seo.homeTitle || (site.name ? `${site.name} – Writing and Journalism Portfolio` : 'Home');
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  ...(site.name ? { name: site.name } : {}),
+  url: Astro.site?.href,
+  ...((seo.homeDescription || site.description) ? { description: seo.homeDescription || site.description } : {}),
+};
+---
+
+<Layout title={title} description={seo.homeDescription || undefined} jsonLd={jsonLd}>
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      {
+        site.name ? (
+          <h1 id="hero-title" class="wordmark-mask">
+            <span class="wordmark">{site.name}</span>
+          </h1>
+        ) : (
+          <h1 id="hero-title" class="sr-only">Home</h1>
+        )
+      }
+
+      {
+        (hasHeroText || showHeroButtons) && (
+          <div class="hero-grid">
+            <div>
+              {site.tagline && (
+                <>
+                  <span class="hero-line" aria-hidden="true" />
+                  <p class="hero-tagline hero-fade">{site.tagline}</p>
+                </>
+              )}
+            </div>
+            <div class="hero-fade hero-fade-late">
+              {home.heroIntro && <p class="hero-intro">{home.heroIntro}</p>}
+              {showHeroButtons && (
+                <div class:list={['hero-actions', !home.heroIntro && 'mt-0']}>
+                  {allArticles.length > 0 && (
+                    <a class="btn btn-primary" href="/articles/">View articles</a>
+                  )}
+                  {allProjects.length > 0 && (
+                    <a class:list={['btn', allArticles.length > 0 ? 'btn-ghost' : 'btn-primary']} href="/projects/">View projects</a>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  {
+    show.about && (
+      <section class="section" aria-labelledby="about-title">
+        <div class="wrap">
+          <SectionHeading number={num.about} title="About" id="about-title" />
+          <div class="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
+            <div class:list={[aboutImage ? 'lg:col-span-7' : 'lg:col-span-10']}>
+              {aboutSummary && <p class="statement">{aboutSummary}</p>}
+              <a class:list={['btn btn-ghost', aboutSummary && 'mt-10']} href="/about/">Read the full About page</a>
+            </div>
+            {aboutImage && (
+              <div class="max-w-sm lg:col-span-5 lg:max-w-none">
+                <img
+                  class="portrait"
+                  src={aboutImage}
+                  alt={aboutImageAlt}
+                  width="800"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ARTICLES -->
+  {
+    show.articles && (
+      <section class="section pt-0" aria-labelledby="articles-title">
+        <div class="wrap">
+          <SectionHeading
+            number={num.articles}
+            title={home.articlesMode === 'featured' && featuredArticles.length > 0 ? 'Featured articles' : 'Latest articles'}
+            id="articles-title"
+            href="/articles/"
+            linkLabel="All articles"
+          />
+          <div class="card-grid">
+            {latest.map((article) => (
+              <ArticleCard article={article} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- PROJECTS -->
+  {
+    show.projects && (
+      <section class="section pt-0" aria-labelledby="projects-title">
+        <div class="wrap">
+          <SectionHeading
+            number={num.projects}
+            title="Featured projects"
+            id="projects-title"
+            href="/projects/"
+            linkLabel="All projects"
+          />
+          <div class="card-grid">
+            {projects.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- CONTACT -->
+  {
+    show.contact && (
+      <section class="section pt-0" aria-labelledby="contact-title">
+        <div class="wrap">
+          <SectionHeading number={num.contact} title="Contact" id="contact-title" />
+          {home.contactText && <p class="statement max-w-3xl">{home.contactText}</p>}
+          {site.email && (
+            <p class:list={[home.contactText && 'mt-8']}>
+              <a class="email-link" href={`mailto:${site.email}`}>{site.email}</a>
+            </p>
+          )}
+          {socials.length > 0 && <SocialLinks class:list={[(site.email || home.contactText) && 'mt-10']} showLabels />}
+        </div>
+      </section>
+    )
+  }
+</Layout>

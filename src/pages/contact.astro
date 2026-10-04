@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import EmptyState from '../components/EmptyState.astro';
+import { pageText, seo, site, socials } from '../lib/site';
+
+const mailto = site.email ? `mailto:${site.email}` : '';
+const hasAnything = Boolean(site.email || socials.length > 0 || site.cv);
+---
+
+<Layout title="Contact" description={seo.contactDescription || undefined}>
+  <section class="wrap pt-14 pb-24 md:pt-20 md:pb-32">
+    <h1 class="display text-5xl md:text-7xl">Contact</h1>
+    {pageText.contactIntro && <p class="lead mt-5">{pageText.contactIntro}</p>}
+
+    {
+      !hasAnything && (
+        <div class="mt-12">
+          <EmptyState title="Contact details coming soon." />
+        </div>
+      )
+    }
+
+    {
+      site.email && (
+        <p class="mt-14">
+          <a class="email-link" href={mailto}>{site.email}</a>
+        </p>
+      )
+    }
+
+    {
+      (socials.length > 0 || site.cv) && (
+        <div class:list={['grid gap-12 border-t border-line pt-12 md:grid-cols-2', site.email ? 'mt-16' : 'mt-14']}>
+          {socials.length > 0 && (
+            <div>
+              <h2 class="font-serif text-2xl">Elsewhere</h2>
+              <SocialLinks class="mt-5" showLabels />
+            </div>
+          )}
+          {site.cv && (
+            <div>
+              <h2 class="font-serif text-2xl">Curriculum vitae</h2>
+              <a class="btn btn-ghost mt-5" href={site.cv} target="_blank" rel="noopener">
+                View CV
+              </a>
+            </div>
+          )}
+        </div>
+      )
+    }
+  </section>
+</Layout>

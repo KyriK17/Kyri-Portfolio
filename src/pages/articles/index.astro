@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ArticleIndex from '../../components/ArticleIndex.astro';
+import { getArticles } from '../../lib/utils';
+import { PAGE_SIZE, pageText, seo, site } from '../../lib/site';
+
+const articles = await getArticles();
+const total = Math.max(1, Math.ceil(articles.length / PAGE_SIZE));
+---
+
+<Layout title="Articles" description={seo.articlesDescription || undefined}>
+  <ArticleIndex
+    heading="Articles"
+    intro={pageText.articlesIntro}
+    articles={articles.slice(0, PAGE_SIZE)}
+    pagination={{ current: 1, total, base: '/articles' }}
+  />
+</Layout>

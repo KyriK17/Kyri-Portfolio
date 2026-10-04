@@ -1,0 +1,30 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ArticleIndex from '../../../components/ArticleIndex.astro';
+import { getArticles, getTaxonomy, slugify } from '../../../lib/utils';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  const { categories } = getTaxonomy(articles);
+
+  return categories.map((category) => ({
+    params: { category: category.slug },
+    props: {
+      name: category.name,
+      items: articles.filter((a) => slugify(a.data.category) === category.slug),
+    },
+  }));
+}
+
+const { category } = Astro.params;
+const { name, items } = Astro.props;
+---
+
+<Layout title={`${name} articles`} description={`Articles filed under ${name}.`}>
+  <ArticleIndex
+    heading={name}
+    intro={`Everything filed under ${name}.`}
+    articles={items}
+    activeCategory={category}
+  />
+</Layout>
