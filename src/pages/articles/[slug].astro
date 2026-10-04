@@ -1,8 +1,9 @@
----
+﻿---
 import { render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
+import ShareArticle from '../../components/ShareArticle.astro';
 import { getArticles, getRelated, formatDate, readingTime, slugify } from '../../lib/utils';
 import { site } from '../../lib/site';
 
@@ -16,40 +17,68 @@ export async function getStaticPaths() {
 
 const { article } = Astro.props;
 const { Content } = await render(article);
-const { title, subtitle, author, date, category, tags, image, imageAlt, excerpt, seoTitle, seoDescription } =
-  article.data;
+
+const {
+  title,
+  subtitle,
+  author,
+  date,
+  category,
+  tags,
+  image,
+  imageAlt,
+  excerpt,
+  seoTitle,
+  seoDescription,
+} = article.data;
 
 const minutes = readingTime(article.body);
 const related = getRelated(article, await getArticles(), 3);
+
+const shareImage = image || '/uploads/Crimson Glow Monogram K.png';
+const articleUrl = new URL(Astro.url.pathname, Astro.site).href;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: title,
   description: seoDescription || excerpt || undefined,
-  ...(image ? { image: [new URL(image, Astro.site).href] } : {}),
+  image: [new URL(shareImage, Astro.site).href],
   datePublished: date.toISOString(),
   ...(author ? { author: { '@type': 'Person', name: author } } : {}),
   ...(site.name ? { publisher: { '@type': 'Organization', name: site.name } } : {}),
-  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+  mainEntityOfPage: articleUrl,
 };
 ---
 
 <Layout
   title={seoTitle || title}
   description={seoDescription || excerpt || undefined}
-  image={image || undefined}
+  image={shareImage}
   type="article"
   publishedTime={date.toISOString()}
   jsonLd={jsonLd}
 >
   <article>
     <header class="wrap pt-12 md:pt-20">
-      <a
-        class="cat link-line"
-        href={`/articles/category/${slugify(category)}/`}>{category}</a
-      >
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <a
+          class="cat link-line"
+          href={`/articles/category/${slugify(category)}/`}
+        >
+          {category}
+        </a>
+
+        <ShareArticle
+          title={title}
+          url={articleUrl}
+          description={seoDescription || excerpt || ''}
+          image={shareImage}
+        />
+      </div>
+
       <h1 class="article-title mt-5">{title}</h1>
+
       {subtitle && <p class="article-sub mt-6">{subtitle}</p>}
 
       <dl class="byline mt-10">
@@ -61,10 +90,14 @@ const jsonLd = {
             </div>
           )
         }
+
         <div>
           <dt>Published</dt>
-          <dd><time datetime={date.toISOString()}>{formatDate(date)}</time></dd>
+          <dd>
+            <time datetime={date.toISOString()}>{formatDate(date)}</time>
+          </dd>
         </div>
+
         <div>
           <dt>Reading time</dt>
           <dd>{minutes} min read</dd>
@@ -97,6 +130,7 @@ const jsonLd = {
         tags.length > 0 && (
           <div class="mx-auto mt-14 max-w-[41rem] border-t border-line pt-6">
             <p class="mb-3 text-sm text-mute">Tagged</p>
+
             <ul class="chips">
               {tags.map((tag) => (
                 <li>
@@ -109,6 +143,19 @@ const jsonLd = {
           </div>
         )
       }
+
+      <div class="mx-auto mt-10 max-w-[41rem] border-t border-line pt-6">
+        <div class="flex items-center justify-between gap-4">
+          <span class="text-sm text-mute">Share this article</span>
+
+          <ShareArticle
+            title={title}
+            url={articleUrl}
+            description={seoDescription || excerpt || ''}
+            image={shareImage}
+          />
+        </div>
+      </div>
     </div>
   </article>
 
@@ -122,6 +169,7 @@ const jsonLd = {
             href="/articles/"
             linkLabel="All articles"
           />
+
           <div class="card-grid">
             {related.map((item) => (
               <ArticleCard article={item} />

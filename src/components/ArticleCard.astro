@@ -1,5 +1,6 @@
----
+﻿---
 import { formatDate, type Article } from '../lib/utils';
+import ShareArticle from './ShareArticle.astro';
 
 interface Props {
   article: Article;
@@ -9,7 +10,10 @@ interface Props {
 
 const { article, variant = 'default' } = Astro.props;
 const { title, excerpt, category, date, image, imageAlt } = article.data;
+
 const href = `/articles/${article.id}/`;
+const shareImage = image || '/uploads/Crimson Glow Monogram K.png';
+const shareUrl = new URL(href, Astro.site).href;
 ---
 
 <article class:list={['card', variant === 'lead' && 'card-lead', !image && 'card-noimg']}>
@@ -27,13 +31,29 @@ const href = `/articles/${article.id}/`;
       </div>
     )
   }
+
   <div class="card-body">
     <p class="meta">
       <span class="cat">{category}</span>
       <time datetime={date.toISOString()}>{formatDate(date)}</time>
     </p>
-    <h3 class="card-title"><a class="card-link" href={href}>{title}</a></h3>
+
+    <h3 class="card-title">
+      <a class="card-link" href={href}>{title}</a>
+    </h3>
+
     {excerpt && <p class="card-excerpt">{excerpt}</p>}
-    <span class="read-more" aria-hidden="true">Read article</span>
+
+    <div class="mt-4 flex items-center gap-3">
+      <a class="read-more" href={href}>Read article</a>
+
+      <ShareArticle
+        title={title}
+        url={shareUrl}
+        description={excerpt || ''}
+        image={shareImage}
+        compact
+      />
+    </div>
   </div>
 </article>

@@ -1,4 +1,4 @@
----
+﻿---
 /**
  * All the <head> tags that matter for search engines and social sharing:
  * title, description, canonical URL, Open Graph and Twitter/X cards.
@@ -29,7 +29,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 
 // Social networks cannot show SVG images, so SVG images fall back to a PNG.
 const usable = (path?: string) => (path && !path.toLowerCase().endsWith('.svg') ? path : '');
-const ogPath = usable(image) || usable(site.ogImage) || '/og-default.png';
+const ogPath = usable(image) || usable(site.ogImage) || '/uploads/Crimson Glow Monogram K.png';
 const ogImage = new URL(ogPath, Astro.site).href;
 
 const xHandle = site.x ? '@' + site.x.replace(/\/+$/, '').split('/').pop() : '';
@@ -54,3 +54,4 @@ const xHandle = site.x ? '@' + site.x.replace(/\/+$/, '').split('/').pop() : '';
 {description && <meta name="twitter:description" content={description} />}
 <meta name="twitter:image" content={ogImage} />
 {xHandle && <meta name="twitter:site" content={xHandle} />}
+
