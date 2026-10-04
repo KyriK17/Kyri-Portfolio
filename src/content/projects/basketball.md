@@ -7,7 +7,7 @@ description: "I have had the privilege of regularly attending fixtures of the
   from their domestic quadruple in the previous season. My coverage of these
   games varies from written media to interviews. For regular updates check my
   Instagram. "
-image: /uploads/file.jpg
+image: /uploads/A7R04342.jpg
 imageAlt: "- Copper Box Arena"
 category: Sports
 tools: []
