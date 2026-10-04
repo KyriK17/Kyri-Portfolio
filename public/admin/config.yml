@@ -15,7 +15,7 @@ backend:
   # base_url: https://YOUR-LOGIN-PROXY.workers.dev
 
 # Lets you edit at http://localhost:4321/admin/ while `npm run cms` is running.
-local_backend: true
+local_backend: false
 
 # Optional: turns on a Draft -> In review -> Ready workflow (uses GitHub pull requests).
 # The simple "Draft" checkbox on each article works without this.
