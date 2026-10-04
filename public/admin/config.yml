@@ -9,7 +9,7 @@
 # ======================================================================
 backend:
   name: github
-  repo: YOUR-GITHUB-USERNAME/YOUR-REPO-NAME
+  repo: KyriK17/Kyri-Portfolio
   branch: main
   # Uncomment and fill in once your login proxy exists:
   # base_url: https://YOUR-LOGIN-PROXY.workers.dev
