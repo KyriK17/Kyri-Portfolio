@@ -9,6 +9,7 @@ description: "I have had the privilege of regularly attending fixtures of the
   Instagram. "
 imageAlt: "- Copper Box Arena"
 tools: []
+projectUrl: https://www.instagram.com/kyrik17?stkn=bW56OGI3aWMybnhl
 featured: false
 order: 100
 ---
