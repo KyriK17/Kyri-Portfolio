@@ -2,7 +2,7 @@
 title: About
 headline: Sports - Business - Media
 summary: ""
-profileImage: /uploads/yai-3-.jpg
+profileImage: /uploads/Yai (3).jpg
 profileImageAlt: ""
 education: []
 interests: []
