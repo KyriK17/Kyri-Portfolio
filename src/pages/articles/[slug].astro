@@ -144,9 +144,16 @@ const jsonLd = {
         )
       }
 
-      <div class="mx-auto mt-10 max-w-[41rem] border-t border-line pt-6">
-        <div class="flex items-center justify-between gap-4">
-          <span class="text-sm text-mute">Share this article</span>
+      <div class="mx-auto mt-16 max-w-[41rem] border-y border-line py-6">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-[0.14em] text-mute">
+              Share this article
+            </p>
+            <p class="mt-1 text-sm text-mute">
+              Send this story to your contacts or share it elsewhere.
+            </p>
+          </div>
 
           <ShareArticle
             title={title}
@@ -180,3 +187,4 @@ const jsonLd = {
     )
   }
 </Layout>
+
