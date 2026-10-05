@@ -29,67 +29,12 @@ const {
   </button>
 </div>
 
-<script>
-  document.querySelectorAll('.share-wrap').forEach((element) => {
-    const root = element as HTMLElement;
-
-    if (root.dataset.shareInitialised === 'true') return;
-    root.dataset.shareInitialised = 'true';
-
-    const button = root.querySelector(
-      '.share-trigger'
-    ) as HTMLButtonElement | null;
-
-    if (!button) return;
-
-    const title = root.dataset.title || document.title;
-
-    const pageUrl = new URL(
-      root.dataset.url || window.location.href,
-      window.location.href
-    ).href;
-
-    button.addEventListener('click', async () => {
-      if (typeof navigator.share !== 'function') {
-        /*
-         * There is no browser API capable of opening the device
-         * Sharesheet when Web Share is unavailable.
-         *
-         * Do not substitute a hard-coded list of social platforms.
-         */
-        console.warn(
-          'Web Share API is unavailable in this browser/context.'
-        );
-        return;
-      }
-
-      try {
-        await navigator.share({
-          title,
-          text: title,
-          url: pageUrl,
-        });
-      } catch (error) {
-        /*
-         * Cancelling the native share chooser is normal.
-         */
-        if (
-          error instanceof DOMException &&
-          error.name === 'AbortError'
-        ) {
-          return;
-        }
-
-        console.error('Native sharing failed:', error);
-      }
-    });
-  });
-</script>
-
 <style>
   .share-wrap {
     display: inline-flex;
     align-items: center;
+    position: relative;
+    z-index: 20;
   }
 
   .share-trigger {
@@ -135,3 +80,48 @@ const {
   }
 </style>
 
+<script>
+  const handleShareClick = async (event: MouseEvent) => {
+    const target = event.target as HTMLElement | null;
+    const button = target?.closest('.share-trigger') as HTMLButtonElement | null;
+
+    if (!button) return;
+
+    const root = button.closest('.share-wrap') as HTMLElement | null;
+    if (!root) return;
+
+    event.preventDefault();
+
+    const title = root.dataset.title || document.title;
+    const pageUrl = new URL(
+      root.dataset.url || window.location.href,
+      window.location.href
+    ).href;
+
+    if (typeof navigator.share !== 'function') {
+      console.warn('Web Share API is unavailable in this browser/context.');
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title,
+        url: pageUrl,
+      });
+    } catch (error) {
+      if (
+        error instanceof DOMException &&
+        error.name === 'AbortError'
+      ) {
+        return;
+      }
+
+      console.error('Native sharing failed:', error);
+    }
+  };
+
+  if (!(window as any).__kyriShareInitialised) {
+    (window as any).__kyriShareInitialised = true;
+    document.addEventListener('click', handleShareClick);
+  }
+</script>
