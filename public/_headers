@@ -8,3 +8,6 @@
 
 /uploads/*
   Cache-Control: public, max-age=86400
+
+/_img/*
+  Cache-Control: public, max-age=604800

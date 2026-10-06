@@ -1,4 +1,5 @@
 ﻿---
+import WebImage from '../../components/WebImage.astro';
 import { render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
@@ -109,13 +110,13 @@ const jsonLd = {
     {
       image && (
         <figure class="wrap article-figure mt-10 md:mt-14">
-          <img
+          <WebImage
             src={image}
             alt={imageAlt}
-            width="1200"
-            height="800"
+            width={1200}
+            height={800}
+            sizes="(min-width: 1200px) 1100px, 100vw"
             loading="eager"
-            decoding="async"
             fetchpriority="high"
           />
         </figure>

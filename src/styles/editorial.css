@@ -243,7 +243,13 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.9s var(--ease-out);
+  transition: transform 0.9s var(--ease-out), opacity 0.8s var(--ease-out);
+}
+@media (scripting: enabled) {
+  .lead-media img:not(.is-loaded) {
+    opacity: 0;
+    transform: scale(1.05);
+  }
 }
 .lead-story:hover .lead-media img {
   transform: scale(1.04);
@@ -338,8 +344,29 @@ a.desk:focus-visible::before {
   font-size: 0.9375rem;
   color: var(--mute);
 }
-.desk.is-empty .desk-meta {
+.desk-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 0.875rem;
   color: var(--mute);
+}
+.desk-soon::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--signal);
+  animation: soon-pulse 2.4s ease-in-out infinite;
+}
+@keyframes soon-pulse {
+  50% {
+    opacity: 0.25;
+  }
 }
 
 /* ---------- Cards (articles and projects keep their layout) ---------- */

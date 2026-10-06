@@ -5,7 +5,10 @@
   "private": true,
   "description": "Editorial portfolio and writing website built with Astro, Tailwind CSS and Decap CMS.",
   "scripts": {
+    "predev": "node scripts/optimise-images.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/optimise-images.mjs",
+    "optimise": "node scripts/optimise-images.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",

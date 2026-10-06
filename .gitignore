@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # Cloudflare
 .wrangler/
+
+# generated smaller image copies
+public/_img/

@@ -1,0 +1,19 @@
+---
+import { webImage } from '../lib/image';
+
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+}
+
+const { src, sizes = '100vw', ...rest } = Astro.props;
+const web = webImage(src);
+---
+
+<img src={web?.src ?? src} srcset={web?.srcset} sizes={web ? sizes : undefined} decoding="async" {...rest} />

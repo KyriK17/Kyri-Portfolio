@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import ArticleIndex from '../../components/ArticleIndex.astro';
 import { getArticles } from '../../lib/utils';
-import { PAGE_SIZE, pageText, seo, site } from '../../lib/site';
+import { PAGE_SIZE, pageText, seo } from '../../lib/site';
 
 const articles = await getArticles();
 const total = Math.max(1, Math.ceil(articles.length / PAGE_SIZE));

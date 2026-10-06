@@ -5,6 +5,7 @@ import SectionHeading from '../components/SectionHeading.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import SocialLinks from '../components/SocialLinks.astro';
+import WebImage from '../components/WebImage.astro';
 import { getArticles, getProjects, slugify, formatDate } from '../lib/utils';
 import { home, seo, site, socials } from '../lib/site';
 
@@ -46,7 +47,7 @@ const desks = [
     : projectCount
       ? '/projects/'
       : '';
-  return { name: desk.name, href, meta: parts.join(', ') || 'Nothing filed yet' };
+  return { name: desk.name, href, meta: parts.join(', '), empty: parts.length === 0 };
 });
 
 // ---- Which sections have something to show? Empty ones are hidden. ----
@@ -57,7 +58,6 @@ const show = {
   contact: home.showContact && Boolean(site.email || socials.length > 0 || home.contactText),
 };
 
-const hasHeroText = Boolean(site.tagline || home.heroIntro);
 const showHeroButtons = allArticles.length > 0 || allProjects.length > 0;
 
 const title = seo.homeTitle || (site.name ? `${site.name} – Writing and Journalism Portfolio` : 'Home');
@@ -105,13 +105,13 @@ const jsonLd = {
           <a class="lead-story" href={`/articles/${leadStory.id}/`}>
             {leadStory.data.image && (
               <div class="lead-media">
-                <img
+                <WebImage
                   src={leadStory.data.image}
                   alt={leadStory.data.imageAlt}
-                  width="1200"
-                  height="900"
+                  width={1200}
+                  height={900}
+                  sizes="(min-width: 960px) 50vw, 100vw"
                   loading="eager"
-                  decoding="async"
                   fetchpriority="high"
                 />
               </div>
@@ -143,7 +143,7 @@ const jsonLd = {
             ) : (
               <div class="desk is-empty">
                 <span class="desk-name">{desk.name}</span>
-                <span class="desk-meta">{desk.meta}</span>
+                <span class="desk-soon">Coming soon</span>
               </div>
             )}
           </li>
@@ -165,14 +165,14 @@ const jsonLd = {
             </div>
             {aboutImage && (
               <div class="max-w-sm lg:col-span-5 lg:max-w-none">
-                <img
+                <WebImage
                   class="portrait"
                   src={aboutImage}
                   alt={aboutImageAlt}
-                  width="800"
-                  height="1000"
+                  width={800}
+                  height={1000}
+                  sizes="(min-width: 1024px) 40vw, 90vw"
                   loading="lazy"
-                  decoding="async"
                 />
               </div>
             )}
@@ -242,3 +242,16 @@ const jsonLd = {
     )
   }
 </Layout>
+
+<script>
+  // Reveal the lead image only once it is ready, so it fades in instead of popping in half-drawn.
+  document.querySelectorAll<HTMLImageElement>('.lead-media img').forEach((img) => {
+    const show = () => img.classList.add('is-loaded');
+    if (img.complete && img.naturalWidth > 0) {
+      img.decode ? img.decode().then(show, show) : show();
+    } else {
+      img.addEventListener('load', show, { once: true });
+      img.addEventListener('error', show, { once: true });
+    }
+  });
+</script>
