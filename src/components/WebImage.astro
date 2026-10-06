@@ -16,4 +16,13 @@ const { src, sizes = '100vw', ...rest } = Astro.props;
 const web = webImage(src);
 ---
 
-<img src={web?.src ?? src} srcset={web?.srcset} sizes={web ? sizes : undefined} decoding="async" {...rest} />
+<span class="reveal">
+  <img
+    src={web?.src ?? src}
+    srcset={web?.srcset}
+    sizes={web ? sizes : undefined}
+    decoding="async"
+    data-reveal
+    {...rest}
+  />
+</span>

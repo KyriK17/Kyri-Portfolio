@@ -53,5 +53,24 @@ const { title, description, image, type, publishedTime, noindex, jsonLd } = Astr
       <slot />
     </main>
     <Footer />
+    <script>
+      // Fade every image in once it is ready. The short delay means the fade is always seen,
+      // even when the image comes straight from the cache.
+      const reveal = (img: HTMLImageElement) => {
+        if (img.classList.contains('is-loaded')) return;
+        const show = () => requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add('is-loaded')));
+        if (img.complete && img.naturalWidth > 0) {
+          img.decode ? img.decode().then(show, show) : show();
+        } else {
+          img.addEventListener('load', show, { once: true });
+          img.addEventListener('error', show, { once: true });
+        }
+      };
+      document.querySelectorAll<HTMLImageElement>('img[data-reveal]').forEach(reveal);
+      // Safety net: never leave an image hidden.
+      setTimeout(() => document.querySelectorAll('img[data-reveal]:not(.is-loaded)').forEach((i) => {
+        if ((i as HTMLImageElement).complete) i.classList.add('is-loaded');
+      }), 4000);
+    </script>
   </body>
 </html>

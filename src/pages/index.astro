@@ -242,16 +242,3 @@ const jsonLd = {
     )
   }
 </Layout>
-
-<script>
-  // Reveal the lead image only once it is ready, so it fades in instead of popping in half-drawn.
-  document.querySelectorAll<HTMLImageElement>('.lead-media img').forEach((img) => {
-    const show = () => img.classList.add('is-loaded');
-    if (img.complete && img.naturalWidth > 0) {
-      img.decode ? img.decode().then(show, show) : show();
-    } else {
-      img.addEventListener('load', show, { once: true });
-      img.addEventListener('error', show, { once: true });
-    }
-  });
-</script>
