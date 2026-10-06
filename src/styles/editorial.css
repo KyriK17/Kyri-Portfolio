@@ -1,0 +1,469 @@
+/* ======================================================================
+   EDITORIAL LAYER
+   The redesign sits on top of global.css. This file is loaded after it and
+   is not wrapped in a cascade layer, so it wins over the older rules.
+   Identity is unchanged: black ground, white text, red as the signature.
+   ====================================================================== */
+
+:root {
+  --signal: #e3262e;
+  --signal-deep: #b81d24;
+  --ink: #080808;
+  --ink-2: #0e0e0e;
+  --paper: #f5f5f2;
+  --mute: #a3a39d;
+  --rule: #262626;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --header-h: 4.5rem;
+}
+
+/* ---------- Page transitions: native cross-document fade, no JS ---------- */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+  animation-timing-function: var(--ease-out);
+}
+.site-header {
+  view-transition-name: site-header;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  background: rgb(8 8 8 / 0.9);
+  border-bottom: 1px solid var(--rule);
+  transition: transform 0.35s var(--ease-out);
+}
+.site-header.is-hidden {
+  transform: translateY(-101%);
+}
+.header-row {
+  min-height: var(--header-h);
+}
+.logo {
+  font-size: 1.625rem;
+  letter-spacing: 0.04em;
+}
+.logo::after {
+  content: "";
+  display: inline-block;
+  width: 0.38em;
+  height: 0.38em;
+  margin-left: 0.1em;
+  background: var(--signal);
+  vertical-align: baseline;
+  transform: translateY(-0.02em);
+}
+.nav-link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--mute);
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease-out);
+}
+.nav-link:hover::after,
+.nav-link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+@media (max-width: 859px) {
+  .js .site-nav {
+    top: var(--header-h);
+  }
+  .nav-link {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+  }
+  .nav-link::after {
+    display: none;
+  }
+  .nav-link[aria-current="page"] {
+    color: var(--signal-soft);
+  }
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 1rem 1.6rem;
+  border-radius: 0;
+}
+.btn-primary {
+  background: var(--signal);
+  box-shadow: 0 0 0 0 rgb(227 38 46 / 0);
+  transition:
+    background-color 0.25s,
+    box-shadow 0.35s var(--ease-out),
+    transform 0.25s;
+}
+.btn-primary:hover {
+  background: var(--signal-deep);
+  box-shadow: 0 10px 28px -10px rgb(227 38 46 / 0.65);
+}
+.btn-ghost:hover {
+  border-color: var(--signal);
+  background: rgb(227 38 46 / 0.08);
+}
+.btn-sm {
+  font-size: 0.8125rem;
+  padding: 0.7rem 1.1rem;
+}
+
+/* ---------- Labels and section headings ---------- */
+.cat {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--signal-soft);
+}
+.section-head-row {
+  align-items: baseline;
+  gap: 1.5rem;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  line-height: 1.1;
+  white-space: normal;
+}
+.section-head::before {
+  content: "";
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.8rem;
+  flex: none;
+  background: var(--signal);
+}
+.section-rule {
+  background: var(--rule);
+  align-self: center;
+}
+.section-link {
+  font-size: 0.9375rem;
+}
+
+/* ---------- Hero ---------- */
+.hero2 {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 6rem);
+  border-bottom: 1px solid var(--rule);
+}
+.hero2::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -30%;
+  right: -15%;
+  width: 70vmax;
+  height: 70vmax;
+  background: radial-gradient(closest-side, rgb(227 38 46 / 0.2), transparent 70%);
+  pointer-events: none;
+}
+.hero2-grid {
+  display: grid;
+  gap: 3rem 4rem;
+  align-items: center;
+}
+@media (min-width: 960px) {
+  .hero2-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    min-height: min(46rem, calc(100svh - var(--header-h) - 8rem));
+  }
+}
+.hero2 .wordmark-mask {
+  font-size: clamp(5.5rem, 17vw, 14rem);
+}
+.hero2-tagline {
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  padding-left: 1.1rem;
+  border-left: 3px solid var(--signal);
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2.8vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  max-width: 24ch;
+  animation: fade-up 0.9s 0.6s var(--ease-out) both;
+}
+.hero2-intro {
+  margin-top: 1.25rem;
+  max-width: 34rem;
+  color: rgb(245 245 242 / 0.78);
+  animation: fade-up 0.9s 0.75s var(--ease-out) both;
+}
+.hero2 .hero-actions {
+  animation: fade-up 0.9s 0.9s var(--ease-out) both;
+}
+
+/* Lead story */
+.lead-story {
+  position: relative;
+  display: block;
+  animation: fade-up 1s 0.5s var(--ease-out) both;
+}
+.lead-media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--ink-2);
+}
+@media (min-width: 960px) {
+  .lead-media {
+    aspect-ratio: 3 / 2;
+  }
+}
+.lead-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease-out);
+}
+.lead-story:hover .lead-media img {
+  transform: scale(1.04);
+}
+.lead-media::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--signal);
+  transform: scaleX(0.18);
+  transform-origin: left;
+  transition: transform 0.7s var(--ease-out);
+}
+.lead-story:hover .lead-media::after,
+.lead-story:focus-visible .lead-media::after {
+  transform: scaleX(1);
+}
+.lead-caption {
+  padding-top: 1.1rem;
+}
+.lead-title {
+  margin-top: 0.5rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* ---------- Media / Business / Sport ---------- */
+.desks {
+  border-bottom: 1px solid var(--rule);
+}
+.desks-list {
+  display: grid;
+}
+@media (min-width: 760px) {
+  .desks-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.desk {
+  position: relative;
+  display: block;
+  padding: 2rem 1.25rem 2.25rem 0;
+  border-top: 1px solid var(--rule);
+  transition: background-color 0.3s;
+}
+@media (min-width: 760px) {
+  .desk {
+    border-top: 0;
+    padding-inline: 2rem;
+    border-left: 1px solid var(--rule);
+  }
+  .desk:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+.desk::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-out);
+}
+a.desk:hover::before,
+a.desk:focus-visible::before {
+  transform: scaleX(1);
+}
+.desk-name {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+}
+.desk-meta {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--mute);
+}
+.desk.is-empty .desk-meta {
+  color: var(--mute);
+}
+
+/* ---------- Cards (articles and projects keep their layout) ---------- */
+.card-media {
+  position: relative;
+}
+.card-media::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease-out);
+}
+.card:hover .card-media::after {
+  transform: scaleX(1);
+}
+.card-media img {
+  filter: saturate(0.95);
+}
+.card-title {
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+.card:hover .card-title .card-link {
+  text-decoration: underline;
+  text-decoration-color: var(--signal);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+.read-more {
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+/* ---------- Article page ---------- */
+.read-progress {
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+.article-title {
+  font-weight: 600;
+  letter-spacing: -0.032em;
+}
+.byline {
+  border-block: 0;
+  border-left: 3px solid var(--signal);
+  padding: 0.35rem 0 0.35rem 1.1rem;
+}
+.byline dt {
+  font-size: 0.8125rem;
+}
+.prose-editorial blockquote {
+  margin-block: 2.4em;
+  padding: 0.2em 0 0.2em 1.5rem;
+  border-left: 4px solid var(--signal);
+  font-size: 1.28em;
+  font-weight: 500;
+  line-height: 1.38;
+  color: var(--paper);
+}
+.prose-editorial > blockquote p + p {
+  margin-top: 0.9em;
+}
+.dropcap > p:first-of-type::first-letter {
+  color: var(--signal);
+}
+
+/* ---------- Articles listing ---------- */
+.filter[aria-current="page"] {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: #fff;
+}
+.filter:hover {
+  border-color: var(--signal);
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  position: relative;
+  padding-top: 4rem;
+}
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: max(1.25rem, calc((100% - 78rem) / 2));
+  width: 5rem;
+  height: 3px;
+  background: var(--signal);
+}
+
+/* ---------- Motion safety ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .lead-media img,
+  .lead-media::after,
+  .desk::before,
+  .card-media::after {
+    transition: none !important;
+  }
+  .hero2-tagline,
+  .hero2-intro,
+  .hero2 .hero-actions,
+  .lead-story {
+    animation: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

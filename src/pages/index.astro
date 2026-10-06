@@ -5,15 +5,18 @@ import SectionHeading from '../components/SectionHeading.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import SocialLinks from '../components/SocialLinks.astro';
-import { getArticles, getProjects } from '../lib/utils';
+import { getArticles, getProjects, slugify, formatDate } from '../lib/utils';
 import { home, seo, site, socials } from '../lib/site';
 
 // ---- Articles: latest, or only those marked "featured" (chosen in Homepage settings) ----
 const allArticles = await getArticles();
 const featuredArticles = allArticles.filter((a) => a.data.featured);
-const latest = (
-  home.articlesMode === 'featured' && featuredArticles.length > 0 ? featuredArticles : allArticles
-).slice(0, 3);
+const pool =
+  home.articlesMode === 'featured' && featuredArticles.length > 0 ? featuredArticles : allArticles;
+
+// The first story is shown large in the hero; the others go in the list below it.
+const leadStory = pool[0];
+const latest = pool.slice(1, 4);
 
 // ---- Projects: those marked "featured", or all of them if none are marked ----
 const allProjects = await getProjects();
@@ -26,22 +29,32 @@ const aboutSummary = home.aboutSummary || about?.data.summary || '';
 const aboutImage = about?.data.profileImage || '';
 const aboutImageAlt = about?.data.profileImageAlt || '';
 
+// ---- Media / Business / Sport: equal entries, counted from the existing content ----
+const desks = [
+  { name: 'Media', slugs: ['media'] },
+  { name: 'Business', slugs: ['business'] },
+  { name: 'Sport', slugs: ['sport', 'sports'] },
+].map((desk) => {
+  const articles = allArticles.filter((a) => desk.slugs.includes(slugify(a.data.category)));
+  const projectCount = allProjects.filter((p) => desk.slugs.includes(slugify(p.data.category))).length;
+  const parts = [
+    articles.length ? `${articles.length} ${articles.length === 1 ? 'article' : 'articles'}` : '',
+    projectCount ? `${projectCount} ${projectCount === 1 ? 'project' : 'projects'}` : '',
+  ].filter(Boolean);
+  const href = articles.length
+    ? `/articles/category/${slugify(articles[0].data.category)}/`
+    : projectCount
+      ? '/projects/'
+      : '';
+  return { name: desk.name, href, meta: parts.join(', ') || 'Nothing filed yet' };
+});
+
 // ---- Which sections have something to show? Empty ones are hidden. ----
 const show = {
   about: home.showAbout && Boolean(aboutSummary || aboutImage),
   articles: home.showArticles && latest.length > 0,
   projects: home.showProjects && projects.length > 0,
   contact: home.showContact && Boolean(site.email || socials.length > 0 || home.contactText),
-};
-
-// Visible sections are numbered 01, 02, 03... in order, with no gaps.
-let counter = 0;
-const number = (visible: boolean) => (visible ? String(++counter).padStart(2, '0') : '');
-const num = {
-  about: number(show.about),
-  articles: number(show.articles),
-  projects: number(show.projects),
-  contact: number(show.contact),
 };
 
 const hasHeroText = Boolean(site.tagline || home.heroIntro);
@@ -59,46 +72,84 @@ const jsonLd = {
 
 <Layout title={title} description={seo.homeDescription || undefined} jsonLd={jsonLd}>
   <!-- HERO -->
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap">
-      {
-        site.name ? (
-          <h1 id="hero-title" class="wordmark-mask">
-            <span class="wordmark">{site.name}</span>
-          </h1>
-        ) : (
-          <h1 id="hero-title" class="sr-only">Home</h1>
-        )
-      }
+  <section class="hero2" aria-labelledby="hero-title">
+    <div class="wrap hero2-grid">
+      <div>
+        {
+          site.name ? (
+            <h1 id="hero-title" class="wordmark-mask">
+              <span class="wordmark">{site.name}</span>
+            </h1>
+          ) : (
+            <h1 id="hero-title" class="sr-only">Home</h1>
+          )
+        }
+        {site.tagline && <p class="hero2-tagline">{site.tagline}</p>}
+        {home.heroIntro && <p class="hero2-intro">{home.heroIntro}</p>}
+        {
+          showHeroButtons && (
+            <div class="hero-actions">
+              {allArticles.length > 0 && (
+                <a class="btn btn-primary" href="/articles/">View articles</a>
+              )}
+              {allProjects.length > 0 && (
+                <a class:list={['btn', allArticles.length > 0 ? 'btn-ghost' : 'btn-primary']} href="/projects/">View projects</a>
+              )}
+            </div>
+          )
+        }
+      </div>
 
       {
-        (hasHeroText || showHeroButtons) && (
-          <div class="hero-grid">
-            <div>
-              {site.tagline && (
-                <>
-                  <span class="hero-line" aria-hidden="true" />
-                  <p class="hero-tagline hero-fade">{site.tagline}</p>
-                </>
-              )}
+        leadStory && (
+          <a class="lead-story" href={`/articles/${leadStory.id}/`}>
+            {leadStory.data.image && (
+              <div class="lead-media">
+                <img
+                  src={leadStory.data.image}
+                  alt={leadStory.data.imageAlt}
+                  width="1200"
+                  height="900"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                />
+              </div>
+            )}
+            <div class="lead-caption">
+              <p class="meta">
+                <span class="cat">{leadStory.data.category}</span>
+                <time datetime={leadStory.data.date.toISOString()}>{formatDate(leadStory.data.date)}</time>
+              </p>
+              <h2 class="lead-title">{leadStory.data.title}</h2>
             </div>
-            <div class="hero-fade hero-fade-late">
-              {home.heroIntro && <p class="hero-intro">{home.heroIntro}</p>}
-              {showHeroButtons && (
-                <div class:list={['hero-actions', !home.heroIntro && 'mt-0']}>
-                  {allArticles.length > 0 && (
-                    <a class="btn btn-primary" href="/articles/">View articles</a>
-                  )}
-                  {allProjects.length > 0 && (
-                    <a class:list={['btn', allArticles.length > 0 ? 'btn-ghost' : 'btn-primary']} href="/projects/">View projects</a>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          </a>
         )
       }
     </div>
+  </section>
+
+  <!-- MEDIA / BUSINESS / SPORT -->
+  <section class="desks" aria-label="Media, Business and Sport">
+    <ul class="wrap desks-list">
+      {
+        desks.map((desk) => (
+          <li>
+            {desk.href ? (
+              <a class="desk" href={desk.href}>
+                <span class="desk-name">{desk.name}</span>
+                <span class="desk-meta">{desk.meta}</span>
+              </a>
+            ) : (
+              <div class="desk is-empty">
+                <span class="desk-name">{desk.name}</span>
+                <span class="desk-meta">{desk.meta}</span>
+              </div>
+            )}
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <!-- ABOUT -->
@@ -106,7 +157,7 @@ const jsonLd = {
     show.about && (
       <section class="section" aria-labelledby="about-title">
         <div class="wrap">
-          <SectionHeading number={num.about} title="About" id="about-title" />
+          <SectionHeading title="About" id="about-title" />
           <div class="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
             <div class:list={[aboutImage ? 'lg:col-span-7' : 'lg:col-span-10']}>
               {aboutSummary && <p class="statement">{aboutSummary}</p>}
@@ -137,8 +188,7 @@ const jsonLd = {
       <section class="section pt-0" aria-labelledby="articles-title">
         <div class="wrap">
           <SectionHeading
-            number={num.articles}
-            title={home.articlesMode === 'featured' && featuredArticles.length > 0 ? 'Featured articles' : 'Latest articles'}
+            title={home.articlesMode === 'featured' && featuredArticles.length > 0 ? 'More featured articles' : 'More articles'}
             id="articles-title"
             href="/articles/"
             linkLabel="All articles"
@@ -159,7 +209,6 @@ const jsonLd = {
       <section class="section pt-0" aria-labelledby="projects-title">
         <div class="wrap">
           <SectionHeading
-            number={num.projects}
             title="Featured projects"
             id="projects-title"
             href="/projects/"
@@ -180,7 +229,7 @@ const jsonLd = {
     show.contact && (
       <section class="section pt-0" aria-labelledby="contact-title">
         <div class="wrap">
-          <SectionHeading number={num.contact} title="Contact" id="contact-title" />
+          <SectionHeading title="Contact" id="contact-title" />
           {home.contactText && <p class="statement max-w-3xl">{home.contactText}</p>}
           {site.email && (
             <p class:list={[home.contactText && 'mt-8']}>

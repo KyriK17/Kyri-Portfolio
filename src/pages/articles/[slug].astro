@@ -59,6 +59,7 @@ const jsonLd = {
   publishedTime={date.toISOString()}
   jsonLd={jsonLd}
 >
+  <div class="read-progress" aria-hidden="true"></div>
   <article>
     <header class="wrap pt-12 md:pt-20">
       <div class="flex flex-wrap items-center justify-between gap-4">
@@ -188,3 +189,16 @@ const jsonLd = {
   }
 </Layout>
 
+<script>
+  // Reading progress: a thin red line across the top that fills as you read.
+  const bar = document.querySelector<HTMLElement>('.read-progress');
+  if (bar) {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  }
+</script>

@@ -74,4 +74,26 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
       if ((event.target as HTMLElement).closest('a')) setOpen(false);
     });
   }
+
+  // Hide the header while scrolling down, bring it back on the way up.
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header) {
+    let lastY = window.scrollY;
+    let ticking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          const menuOpen = menu?.dataset.open === 'true';
+          header.classList.toggle('is-hidden', !menuOpen && y > lastY && y > 160);
+          lastY = y;
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+  }
 </script>
