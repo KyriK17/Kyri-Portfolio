@@ -19,7 +19,7 @@ local_backend: false
 
 # Optional: turns on a Draft -> In review -> Ready workflow (uses GitHub pull requests).
 # The simple "Draft" checkbox on each article works without this.
-# publish_mode: editorial_workflow
+publish_mode: editorial_workflow
 
 # Uploaded images and files go here; the site finds them at /uploads/...
 media_folder: public/uploads
