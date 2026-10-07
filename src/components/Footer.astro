@@ -1,6 +1,7 @@
 ---
 import { site, nav } from '../lib/site';
 import SocialLinks from './SocialLinks.astro';
+import CoffeeButton from './CoffeeButton.astro';
 
 const year = new Date().getFullYear();
 ---
@@ -30,6 +31,7 @@ const year = new Date().getFullYear();
       <div>
         {site.email && <a class="footer-link text-sm" href={`mailto:${site.email}`}>{site.email}</a>}
         <SocialLinks class={site.email ? 'mt-4' : ''} />
+        <CoffeeButton class="mt-5" />
       </div>
     </div>
 

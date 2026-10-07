@@ -139,6 +139,16 @@ const hasAnything = Boolean(
               </section>
             )}
 
+            {site.coffee && (
+              <section aria-labelledby="coffee-title">
+                <SectionHeading title="Support the work" id="coffee-title" />
+                <p class="max-w-xl text-mute">
+                  If you enjoy what I write across media, business and sport, you can buy me a coffee. Every one helps keep it going.
+                </p>
+                <p class="mt-6"><a class="btn btn-primary" href={site.coffee} target="_blank" rel="noopener noreferrer">Buy me a coffee</a></p>
+              </section>
+            )}
+
             {hasElsewhere && (
               <section aria-labelledby="elsewhere-title">
                 <SectionHeading title="Find me elsewhere" id="elsewhere-title" />

@@ -1,0 +1,16 @@
+---
+/** Small "Buy me a coffee" pill. Renders nothing until a Buy Me a Coffee address is set in Site settings. */
+import { site } from '../lib/site';
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+{
+  site.coffee && (
+    <a class:list={['coffee-btn', className]} href={site.coffee} target="_blank" rel="noopener noreferrer">
+      <span aria-hidden="true">☕</span> Buy me a coffee
+    </a>
+  )
+}

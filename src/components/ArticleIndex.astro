@@ -6,6 +6,7 @@
 import ArticleCard from './ArticleCard.astro';
 import Pagination from './Pagination.astro';
 import EmptyState from './EmptyState.astro';
+import CoffeeButton from './CoffeeButton.astro';
 import { getArticles, getTaxonomy, type Article } from '../lib/utils';
 
 interface Props {
@@ -32,6 +33,7 @@ const showLead = !activeCategory && !activeTag && (!pagination || pagination.cur
   <header>
     <h1 class="display page-title text-5xl md:text-7xl">{heading}</h1>
     {intro && <p class="lead mt-5">{intro}</p>}
+    <CoffeeButton class="mt-6" />
   </header>
 
   {

@@ -694,3 +694,29 @@ a.desk:focus-visible::before {
     transition: none !important;
   }
 }
+
+/* ---- Buy me a coffee pill ---- */
+.coffee-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--signal);
+  border-radius: 999px;
+  color: var(--paper);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.coffee-btn:hover,
+.coffee-btn:focus-visible {
+  background: var(--signal);
+  transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .coffee-btn { transition: none; }
+  .coffee-btn:hover, .coffee-btn:focus-visible { transform: none; }
+}

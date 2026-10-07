@@ -1,4 +1,5 @@
 ---
+import CoffeeButton from './CoffeeButton.astro';
 interface Props {
   title: string;
   /** Optional section number, for example "01". */
@@ -7,9 +8,11 @@ interface Props {
   /** Optional link on the right-hand side. */
   href?: string;
   linkLabel?: string;
+  /** Show the small Buy me a coffee button beside the link. */
+  coffee?: boolean;
 }
 
-const { title, number, id, href, linkLabel } = Astro.props;
+const { title, number, id, href, linkLabel, coffee = false } = Astro.props;
 ---
 
 <div class="section-head-row">
@@ -18,5 +21,6 @@ const { title, number, id, href, linkLabel } = Astro.props;
     <span>{title}</span>
   </h2>
   <span class="section-rule" aria-hidden="true"></span>
+  {coffee && <CoffeeButton />}
   {href && linkLabel && <a class="section-link link-line" href={href}>{linkLabel}</a>}
 </div>
