@@ -16,6 +16,8 @@ export const site = {
   tagline: text(settings.tagline),
   email: text(settings.email),
   cv: text(settings.cv),
+  /** Buy Me a Coffee page address. Leave blank to hide the Coffee tab. */
+  coffee: text((settings as { coffee?: string }).coffee),
   x: text(settings.x),
   /** Default meta description for search engines (src/data/seo.json). */
   description: text(seoData.defaultDescription),
@@ -64,6 +66,7 @@ const defaultNav = [
 const customNav = (navigationData.items ?? [])
   .map((item) => ({ label: text(item.label), href: text(item.href), show: item.show !== false }))
   .filter((item) => item.label && item.href && item.show)
+  .filter((item) => item.href !== '/coffee/' || Boolean(site.coffee))
   .map(({ label, href }) => ({ label, href }));
 
 export const nav = (navigationData.items ?? []).length > 0 ? customNav : defaultNav;

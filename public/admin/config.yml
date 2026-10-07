@@ -178,6 +178,7 @@ collections:
           - { label: LinkedIn URL, name: linkedin, widget: string, required: false }
           - { label: X / Twitter URL, name: x, widget: string, required: false }
           - { label: GitHub URL, name: github, widget: string, required: false }
+          - { label: Buy Me a Coffee URL, name: coffee, widget: string, required: false, hint: "Full address, for example https://buymeacoffee.com/yourname . Blank hides the Coffee tab." }
           - { label: CV (PDF), name: cv, widget: file, required: false, hint: "Upload a PDF. Blank hides every CV button." }
 
   - name: navigation

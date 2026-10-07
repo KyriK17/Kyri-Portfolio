@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import EmptyState from '../components/EmptyState.astro';
+import { site } from '../lib/site';
+---
+
+<Layout title="Buy me a coffee" description="Enjoy the writing? Support it with a coffee.">
+  <section class="wrap pt-14 pb-24 md:pt-20 md:pb-32">
+    <h1 class="display page-title text-5xl md:text-7xl">Buy me a coffee</h1>
+    <p class="lead mt-5">
+      If you enjoy what I write across media, business and sport, you can support it with a coffee. Every one helps keep it going.
+    </p>
+
+    {
+      site.coffee ? (
+        <p class="mt-14">
+          <a class="btn btn-primary" href={site.coffee} target="_blank" rel="noopener noreferrer">
+            Buy me a coffee
+          </a>
+        </p>
+      ) : (
+        <div class="mt-12">
+          <EmptyState title="Coming soon." />
+        </div>
+      )
+    }
+  </section>
+</Layout>
