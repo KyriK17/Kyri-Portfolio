@@ -11,7 +11,7 @@ tags:
 image: /uploads/photo-06-10-2026-20-10-462.jpg
 featured: true
 ---
-The result in Lithuania seems to be a blur after such a dominant display from the London Lions on Tuesday the 6th of October against Laguna Tenerife. The Lions won by an eight-point margin as the final buzzer sounded with the score at 89 – 77. 
+The result in Lithuania seems to be a blur after such a dominant display from the London Lions on Tuesday the 6th of October against Laguna Tenerife. The Lions won by a twelve-point margin as the final buzzer sounded with the score at 89 – 77. 
 
 The highly anticipated game was played out at the Copper Box Arena, the first time this season the Lions hosted a EuroCup fixture. Tenerife opened the scoring in a stagnant first quarter riddled with missed opportunities amongst a multitude of attempts. A standout chance for Tenerife was created solely from the misplaced pass of Devante Jones (3) in which they countered and scored. Jones (3) later made up for his error with three points and only 0:24 left to play. Nevertheless, mostly thanks to the consistency of Sharmandini Giorgi (19) and his 8 points, Tenerife led at the end with a +1 advantage and the score at 18-19.
 
