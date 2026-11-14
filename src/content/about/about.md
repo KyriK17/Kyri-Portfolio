@@ -8,4 +8,4 @@ education: []
 interests: []
 skills: []
 ---
-I'm an A-Level student studying computer science, media studies and business studies. I regularly attend business and media events as well as sports fixtures all across the industry. Make sure to get into contact for any written media, interviews or coverage of an event.
+I’m an A-Level student and freelance writer particularly interested in how the areas of business, sport and media connect, from physical media and journalism to the business, marketing and commercial side of sport. I regularly attend events within every industry helping me to develop a deep understanding of the relationships between these industries. Make sure to get into contact for any written media, interviews or coverage of an event.
