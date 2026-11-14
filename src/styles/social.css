@@ -140,7 +140,4 @@
   .sv-stage[data-state='loading']::after { animation: none; }
 }
 
-/* Feed-loaded cards use a plain image; sections stay hidden until they have something to show. */
-.social-media > img { position: absolute; inset: 0; }
 section[hidden] { display: none !important; }
-.social-block:has(> section[hidden]) { display: none; }

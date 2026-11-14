@@ -9,7 +9,7 @@ import { pageText, site, socials } from '../lib/site';
 
 const reels = await getSocialPosts('instagram');
 const linkedin = await getSocialPosts('linkedin');
-const hasAnything = reels.length > 0 || Boolean(site.instagramFeed) || linkedin.length > 0 || socials.length > 0 || Boolean(site.email);
+const hasAnything = reels.length > 0 || linkedin.length > 0 || socials.length > 0 || Boolean(site.email);
 ---
 
 <Layout title="Socials" description="Latest reels and posts, and where to follow along.">
@@ -23,9 +23,9 @@ const hasAnything = reels.length > 0 || Boolean(site.instagramFeed) || linkedin.
       </div>
     )}
 
-    {(reels.length > 0 || site.instagramFeed) && (
+    {reels.length > 0 && (
       <div class="social-block mt-16">
-        <SocialPosts platform="instagram" title="Instagram" id="reels-title" limit={5} feed={site.instagramFeed} bare />
+        <SocialPosts platform="instagram" title="Instagram" id="reels-title" bare />
       </div>
     )}
 

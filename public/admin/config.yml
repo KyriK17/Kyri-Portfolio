@@ -120,12 +120,12 @@ collections:
         options:
           - { label: Instagram reel, value: instagram }
           - { label: LinkedIn post, value: linkedin }
-      - { label: Link or embed code, name: url, widget: text, hint: "Instagram: paste the post or reel link. LinkedIn: paste the 'Embed this post' code (or the post link). To change the cover of a post that already appears automatically, add it here with the same Instagram link and upload a cover." }
+      - { label: Link or embed code, name: url, widget: text, hint: "Instagram: paste the post or reel link. LinkedIn: paste the 'Embed this post' code (or the post link)." }
       - { label: Caption (optional), name: title, widget: string, required: false, hint: "A short line shown under the cover." }
-      - { label: Cover image (optional), name: cover, widget: image, required: false, hint: "Best at 1080 x 1350 (4:5, Instagram portrait). Replaces the automatic cover for this post. Without one, the automatic cover or a black and red placeholder is shown." }
+      - { label: Cover image (optional), name: cover, widget: image, required: false, hint: "Best at 1080 x 1350 (4:5, Instagram portrait). Without one, a black and red placeholder is shown." }
       - { label: Date, name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
-      - { label: Pin to the start, name: pinned, widget: boolean, default: false, hint: "Pinned posts always come first, ahead of the automatic ones." }
-      - { label: "Hide from the site", name: draft, widget: boolean, default: false, hint: "Tick this to hide a post. For a post that appears automatically, add an entry with the same Instagram link and tick this." }
+      - { label: Pin to the start, name: pinned, widget: boolean, default: false, hint: "Pinned posts always come first." }
+      - { label: "Hide from the site", name: draft, widget: boolean, default: false, hint: "Tick this to hide a post without deleting it." }
 
   # ====================================================================
   # HOMEPAGE
@@ -205,7 +205,6 @@ collections:
           - { label: Main tagline, name: tagline, widget: string, required: false, hint: "Shown on the home page and in the footer." }
           - { label: Contact email, name: email, widget: string, required: false, hint: "Leave blank to hide all email links." }
           - { label: Instagram URL, name: instagram, widget: string, required: false, hint: "Full address, for example https://www.instagram.com/yourname/ . Blank hides the icon." }
-          - { label: Instagram feed address (Behold), name: instagramFeed, widget: string, required: false, hint: "The feeds.behold.so address that loads your latest reels automatically. Blank turns it off." }
           - { label: LinkedIn URL, name: linkedin, widget: string, required: false }
           - { label: X / Twitter URL, name: x, widget: string, required: false }
           - { label: GitHub URL, name: github, widget: string, required: false }
