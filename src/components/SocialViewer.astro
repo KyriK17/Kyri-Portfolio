@@ -1,0 +1,93 @@
+---
+/**
+ * The pop-up that plays a reel or shows a LinkedIn post using the official embed.
+ * Include once on any page that uses SocialPosts. The embed only loads when a card
+ * is tapped, so the page itself stays fast. If it can't load, a clean fallback link shows.
+ */
+import '../styles/social.css';
+---
+
+<dialog class="social-dialog" id="social-viewer" aria-label="Post viewer">
+  <div class="sv-bar">
+    <a class="sv-view link-line" href="#" target="_blank" rel="noopener noreferrer">View original</a>
+    <button class="sv-close" type="button" aria-label="Close">&times;</button>
+  </div>
+  <div class="sv-stage" data-state="idle"></div>
+  <p class="sv-fallback" hidden>
+    This couldn&rsquo;t be loaded here. <a class="sv-fallback-link link-line" href="#" target="_blank" rel="noopener noreferrer">Open it on its own site</a>.
+  </p>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('social-viewer') as HTMLDialogElement | null;
+
+  if (dialog && typeof dialog.showModal === 'function') {
+    const stage = dialog.querySelector<HTMLElement>('.sv-stage')!;
+    const fallback = dialog.querySelector<HTMLElement>('.sv-fallback')!;
+    const viewLink = dialog.querySelector<HTMLAnchorElement>('.sv-view')!;
+    const fallbackLink = dialog.querySelector<HTMLAnchorElement>('.sv-fallback-link')!;
+    let timer: number | undefined;
+
+    const reset = () => {
+      window.clearTimeout(timer);
+      stage.replaceChildren();
+      stage.dataset.state = 'idle';
+      fallback.hidden = true;
+    };
+
+    const open = (card: HTMLAnchorElement) => {
+      const embed = card.dataset.embed ?? '';
+      const view = card.dataset.view ?? card.href;
+      const label = card.dataset.label ?? 'post';
+      if (!/^https:\/\/www\.(instagram|linkedin)\.com\//.test(embed)) return false;
+
+      reset();
+      viewLink.href = view;
+      viewLink.textContent = `View on ${label}`;
+      fallbackLink.href = view;
+      stage.dataset.platform = label.toLowerCase();
+      stage.dataset.state = 'loading';
+
+      const frame = document.createElement('iframe');
+      frame.title = `${label} post`;
+      frame.setAttribute('allowfullscreen', '');
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.addEventListener('load', () => {
+        window.clearTimeout(timer);
+        stage.dataset.state = 'ready';
+      });
+      timer = window.setTimeout(() => {
+        if (stage.dataset.state !== 'ready') {
+          stage.replaceChildren();
+          stage.dataset.state = 'failed';
+          fallback.hidden = false;
+        }
+      }, 8000);
+      frame.src = embed;
+      stage.append(frame);
+      dialog.showModal();
+      return true;
+    };
+
+    document.addEventListener('click', (event) => {
+      const mouse = event as MouseEvent;
+      if (mouse.button !== 0 || mouse.metaKey || mouse.ctrlKey || mouse.shiftKey || mouse.altKey) return;
+      const card = (event.target as Element | null)?.closest<HTMLAnchorElement>('a.social-card[data-embed]');
+      if (!card) return;
+      if (open(card)) event.preventDefault();
+    });
+
+    dialog.querySelector('.sv-close')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', reset);
+  }
+
+  // A cover image that fails to load just falls back to the placeholder behind it.
+  document.querySelectorAll<HTMLImageElement>('.social-media img').forEach((img) => {
+    const drop = () => img.closest('.reveal')?.remove();
+    img.addEventListener('error', drop);
+    if (img.complete && img.naturalWidth === 0) drop();
+  });
+</script>

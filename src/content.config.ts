@@ -81,7 +81,24 @@ const about = defineCollection({
   }),
 });
 
+const social = defineCollection({
+  loader: glob({
+    pattern: '**/*.md',
+    base: 'src/content/social',
+  }),
+  schema: z.object({
+    platform: z.enum(['instagram', 'linkedin']),
+    url: z.string(),
+    title: str(),
+    cover: str(),
+    date: z.coerce.date(),
+    pinned: z.boolean().default(false),
+    draft: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
+  social,
   articles,
   projects,
   about,

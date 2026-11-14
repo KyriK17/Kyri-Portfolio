@@ -5,6 +5,6 @@
   "homeArticles": "latest",
   "showAbout": true,
   "showArticles": true,
-  "showProjects": true,
+  "showProjects": false,
   "showContact": true
 }

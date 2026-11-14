@@ -1,0 +1,77 @@
+---
+/**
+ * A row of Instagram reels or LinkedIn posts (Social posts in the CMS).
+ * Renders nothing at all when there are no posts, so empty rows never show.
+ * Tapping a card opens SocialViewer; without JavaScript the card is a plain link.
+ */
+import '../styles/social.css';
+import SectionHeading from './SectionHeading.astro';
+import WebImage from './WebImage.astro';
+import { getSocialPosts, type Platform } from '../lib/social';
+
+interface Props {
+  platform: Platform;
+  title: string;
+  id: string;
+  limit?: number;
+  href?: string;
+  linkLabel?: string;
+  /** Skip the section/wrap padding (use inside a page that already has it). */
+  bare?: boolean;
+}
+
+const { platform, title, id, limit, href, linkLabel, bare = false } = Astro.props;
+const posts = await getSocialPosts(platform, limit);
+const label = platform === 'instagram' ? 'Instagram' : 'LinkedIn';
+const dims = platform === 'instagram' ? { width: 720, height: 1280 } : { width: 1200, height: 630 };
+---
+
+{
+  posts.length > 0 && (
+    <section class:list={[!bare && 'section pt-0']} aria-labelledby={id}>
+      <div class:list={[!bare && 'wrap']}>
+        <SectionHeading title={title} id={id} href={href} linkLabel={linkLabel} />
+        <ul class:list={['social-grid', `social-grid--${platform}`]}>
+          {posts.map((post) => (
+            <li>
+              <a
+                class:list={['social-card', `social-card--${platform}`]}
+                href={post.view}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-embed={post.embed}
+                data-view={post.view}
+                data-label={label}
+                aria-label={post.title ? `${post.title} (${label})` : `Open ${label} post`}
+              >
+                <span class="social-media">
+                  <span class="social-ph" aria-hidden="true">
+                    {platform === 'instagram' ? (
+                      <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
+                        <path d="M8 5.5v13l11-6.5z" />
+                      </svg>
+                    ) : (
+                      <span class="social-ph-in">in</span>
+                    )}
+                  </span>
+                  {post.cover && (
+                    <WebImage
+                      src={post.cover}
+                      alt=""
+                      width={dims.width}
+                      height={dims.height}
+                      sizes="(min-width: 768px) 25vw, 50vw"
+                      loading="lazy"
+                    />
+                  )}
+                  <span class="social-badge">{label}</span>
+                </span>
+                {post.title && <span class="social-caption">{post.title}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

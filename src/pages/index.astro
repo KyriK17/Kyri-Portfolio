@@ -6,6 +6,8 @@ import ArticleCard from '../components/ArticleCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import WebImage from '../components/WebImage.astro';
+import SocialPosts from '../components/SocialPosts.astro';
+import SocialViewer from '../components/SocialViewer.astro';
 import { getArticles, getProjects, slugify, formatDate } from '../lib/utils';
 import { home, seo, site, socials } from '../lib/site';
 
@@ -37,16 +39,10 @@ const desks = [
   { name: 'Sport', slugs: ['sport', 'sports'] },
 ].map((desk) => {
   const articles = allArticles.filter((a) => desk.slugs.includes(slugify(a.data.category)));
-  const projectCount = allProjects.filter((p) => desk.slugs.includes(slugify(p.data.category))).length;
   const parts = [
     articles.length ? `${articles.length} ${articles.length === 1 ? 'article' : 'articles'}` : '',
-    projectCount ? `${projectCount} ${projectCount === 1 ? 'project' : 'projects'}` : '',
   ].filter(Boolean);
-  const href = articles.length
-    ? `/articles/category/${slugify(articles[0].data.category)}/`
-    : projectCount
-      ? '/projects/'
-      : '';
+  const href = articles.length ? `/articles/category/${slugify(articles[0].data.category)}/` : '';
   return { name: desk.name, href, meta: parts.join(', '), empty: parts.length === 0 };
 });
 
@@ -58,7 +54,7 @@ const show = {
   contact: home.showContact && Boolean(site.email || socials.length > 0 || home.contactText),
 };
 
-const showHeroButtons = allArticles.length > 0 || allProjects.length > 0;
+const showHeroButtons = allArticles.length > 0;
 
 const title = seo.homeTitle || (site.name ? `${site.name} – Writing and Journalism Portfolio` : 'Home');
 const jsonLd = {
@@ -91,9 +87,6 @@ const jsonLd = {
             <div class="hero-actions">
               {allArticles.length > 0 && (
                 <a class="btn btn-primary" href="/articles/">View articles</a>
-              )}
-              {allProjects.length > 0 && (
-                <a class:list={['btn', allArticles.length > 0 ? 'btn-ghost' : 'btn-primary']} href="/projects/">View projects</a>
               )}
             </div>
           )
@@ -224,6 +217,11 @@ const jsonLd = {
       </section>
     )
   }
+
+  <!-- LATEST REELS (hidden automatically when there are none) -->
+  <SocialPosts platform="instagram" title="Latest reels" id="reels-title" limit={4} href="/socials/" linkLabel="All socials" />
+  <SocialPosts platform="linkedin" title="On LinkedIn" id="linkedin-title" limit={3} href="/socials/" linkLabel="All socials" />
+  <SocialViewer />
 
   <!-- CONTACT -->
   {

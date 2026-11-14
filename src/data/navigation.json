@@ -1,10 +1,11 @@
 {
   "items": [
     { "label": "Home", "href": "/", "show": true },
-    { "label": "About", "href": "/about/", "show": true },
     { "label": "Articles", "href": "/articles/", "show": true },
-    { "label": "Projects", "href": "/projects/", "show": true },
-    { "label": "Contact", "href": "/contact/", "show": true },
-    { "label": "Coffee", "href": "/coffee/", "show": true }
+    { "label": "Socials", "href": "/socials/", "show": true },
+    { "label": "About", "href": "/about/", "show": true },
+    { "label": "Projects", "href": "/projects/", "show": false },
+    { "label": "Contact", "href": "/contact/", "show": false },
+    { "label": "Coffee", "href": "/coffee/", "show": false }
   ]
 }

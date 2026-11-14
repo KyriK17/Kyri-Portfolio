@@ -98,6 +98,36 @@ collections:
       - { label: Search description (SEO), name: seoDescription, widget: text, required: false }
 
   # ====================================================================
+  # SOCIAL POSTS (Instagram reels and LinkedIn posts on the Socials page)
+  # ====================================================================
+  - name: social
+    label: Social posts
+    label_singular: Social post
+    description: "Add Instagram reels and LinkedIn posts for the Socials page. Paste the link; a cover image is optional."
+    folder: src/content/social
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{year}}-{{month}}-{{day}}-{{hour}}{{minute}}{{second}}"
+    summary: "{{platform}} · {{title}} · {{date}}"
+    sortable_fields: [date, platform]
+    fields:
+      - label: Platform
+        name: platform
+        widget: select
+        default: instagram
+        options:
+          - { label: Instagram reel, value: instagram }
+          - { label: LinkedIn post, value: linkedin }
+      - { label: Link or embed code, name: url, widget: text, hint: "Instagram: paste the reel's link. LinkedIn: paste the 'Embed this post' code (or the post link)." }
+      - { label: Caption (optional), name: title, widget: string, required: false, hint: "A short line shown under the cover." }
+      - { label: Cover image (optional), name: cover, widget: image, required: false, hint: "A screenshot of the reel works well. Without one, a black and red placeholder is shown." }
+      - { label: Date, name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { label: Pin to the start, name: pinned, widget: boolean, default: false, hint: "Pinned posts always come first." }
+      - { label: "Hide from the site", name: draft, widget: boolean, default: false }
+
+  # ====================================================================
   # HOMEPAGE
   # ====================================================================
   - name: homepage
