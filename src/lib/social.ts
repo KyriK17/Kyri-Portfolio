@@ -68,6 +68,21 @@ function parseLinkedIn(input: string): { embed: string; view: string } | null {
 }
 
 /**
+ * Short codes of Instagram posts hidden in the admin (an entry with "Hide from the site" ticked).
+ * The automatic feed uses this to leave those posts out.
+ */
+export async function getHiddenInstagramCodes(): Promise<string[]> {
+  const entries = await getCollection('social', ({ data }) => data.draft && data.platform === 'instagram');
+  const codes: string[] = [];
+  for (const entry of entries) {
+    const parsed = parseInstagram(entry.data.url);
+    const code = parsed?.view.match(/\/(?:reel|p|tv)\/([A-Za-z0-9_-]+)/)?.[1];
+    if (code) codes.push(code);
+  }
+  return codes;
+}
+
+/**
  * Published social posts: pinned first, then newest first.
  * A post whose link can't be understood is quietly left out, so nothing broken is ever shown.
  */

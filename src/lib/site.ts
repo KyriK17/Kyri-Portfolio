@@ -16,6 +16,8 @@ export const site = {
   tagline: text(settings.tagline),
   email: text(settings.email),
   cv: text(settings.cv),
+  /** Behold feed address that supplies the latest Instagram reels automatically (blank = off). */
+  instagramFeed: /^https:\/\/feeds\.behold\.so\//.test(text(settings.instagramFeed)) ? text(settings.instagramFeed) : '',
   /** Buy Me a Coffee page address. Leave blank to hide the Coffee tab. */
   coffee: text((settings as { coffee?: string }).coffee),
   x: text(settings.x),

@@ -7,7 +7,7 @@
 import '../styles/social.css';
 import SectionHeading from './SectionHeading.astro';
 import WebImage from './WebImage.astro';
-import { getSocialPosts, type Platform } from '../lib/social';
+import { getHiddenInstagramCodes, getSocialPosts, type Platform } from '../lib/social';
 
 interface Props {
   platform: Platform;
@@ -16,19 +16,30 @@ interface Props {
   limit?: number;
   href?: string;
   linkLabel?: string;
+  /** Behold feed address: latest reels are added automatically in the browser (Instagram only). */
+  feed?: string;
   /** Skip the section/wrap padding (use inside a page that already has it). */
   bare?: boolean;
 }
 
-const { platform, title, id, limit, href, linkLabel, bare = false } = Astro.props;
+const { platform, title, id, limit, href, linkLabel, feed = '', bare = false } = Astro.props;
 const posts = await getSocialPosts(platform, limit);
 const label = platform === 'instagram' ? 'Instagram' : 'LinkedIn';
-const dims = platform === 'instagram' ? { width: 720, height: 1280 } : { width: 1200, height: 630 };
+const feedUrl = platform === 'instagram' ? feed : '';
+const hiddenCodes = feedUrl ? await getHiddenInstagramCodes() : [];
+const dims = platform === 'instagram' ? { width: 1080, height: 1350 } : { width: 1200, height: 750 };
 ---
 
 {
-  posts.length > 0 && (
-    <section class:list={[!bare && 'section pt-0']} aria-labelledby={id}>
+  (posts.length > 0 || feedUrl) && (
+    <section
+      class:list={[!bare && 'section pt-0']}
+      aria-labelledby={id}
+      hidden={posts.length === 0}
+      data-social-feed={feedUrl || undefined}
+      data-limit={limit ?? 12}
+      data-hidden={hiddenCodes.length ? JSON.stringify(hiddenCodes) : undefined}
+    >
       <div class:list={[!bare && 'wrap']}>
         <SectionHeading title={title} id={id} href={href} linkLabel={linkLabel} />
         <ul class:list={['social-grid', `social-grid--${platform}`]}>
@@ -42,6 +53,7 @@ const dims = platform === 'instagram' ? { width: 720, height: 1280 } : { width: 
                 data-embed={post.embed}
                 data-view={post.view}
                 data-label={label}
+                data-pinned={post.pinned ? 'true' : undefined}
                 aria-label={post.title ? `${post.title} (${label})` : `Open ${label} post`}
               >
                 <span class="social-media">
@@ -75,3 +87,113 @@ const dims = platform === 'instagram' ? { width: 720, height: 1280 } : { width: 
     </section>
   )
 }
+
+<script>
+  // Adds the latest posts and reels from the Behold feed. Any failure leaves the page exactly as it was.
+  const PLAY =
+    '<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
+
+  document.querySelectorAll<HTMLElement>('section[data-social-feed]').forEach(async (section) => {
+    try {
+      const url = section.dataset.socialFeed ?? '';
+      const grid = section.querySelector<HTMLElement>('ul.social-grid');
+      if (!grid || !/^https:\/\/feeds\.behold\.so\//.test(url)) return;
+      const limit = Number(section.dataset.limit) || 12;
+
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 8000);
+      const response = await fetch(url, { signal: controller.signal });
+      window.clearTimeout(timer);
+      if (!response.ok) return;
+      const data = await response.json();
+      const items: any[] = Array.isArray(data) ? data : Array.isArray(data?.posts) ? data.posts : [];
+
+      // Posts added by hand in the admin win over the automatic copy, so a custom cover
+      // replaces the one from Instagram. They are matched by the post's short code.
+      const codeOf = (address: string | undefined) =>
+        (address ?? '').match(/\/(?:reels?|p|tv)\/([A-Za-z0-9_-]+)/i)?.[1] ?? '';
+      const manual = new Map<string, HTMLLIElement>();
+      grid.querySelectorAll<HTMLAnchorElement>('a.social-card').forEach((a) => {
+        const code = codeOf(a.dataset.view);
+        const li = a.closest('li');
+        if (code && li) manual.set(code, li);
+      });
+      const feedCodes = new Set(items.map((item) => codeOf(String(item?.permalink ?? ''))));
+      const placed = new Set<string>();
+      let hidden = new Set<string>();
+      try {
+        hidden = new Set<string>(JSON.parse(section.dataset.hidden ?? '[]'));
+      } catch {
+        /* ignore */
+      }
+
+      for (const item of items) {
+        if (grid.children.length >= limit) break;
+
+        const match = String(item.permalink ?? '').match(
+          /^https:\/\/www\.instagram\.com\/(?:[A-Za-z0-9._]+\/)?(reels?|p|tv)\/([A-Za-z0-9_-]+)/i,
+        );
+        if (!match) continue;
+        const kind = match[1].toLowerCase().startsWith('reel') ? 'reel' : match[1].toLowerCase();
+        const view = `https://www.instagram.com/${kind}/${match[2]}/`;
+        if (hidden.has(match[2])) continue; // hidden in the admin
+        const existing = manual.get(match[2]);
+        if (existing) {
+          // Pinned posts stay at the start; others move into feed order. Either way the custom cover is kept.
+          if (existing.querySelector('a[data-pinned]') === null) grid.append(existing);
+          placed.add(match[2]);
+          continue;
+        }
+
+        const thumb: string = item.sizes?.medium?.mediaUrl || item.thumbnailUrl || '';
+
+        const link = document.createElement('a');
+        link.className = 'social-card social-card--instagram';
+        link.href = view;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.dataset.embed = `${view}embed/`;
+        link.dataset.view = view;
+        link.dataset.label = 'Instagram';
+        link.setAttribute('aria-label', 'Open Instagram post');
+
+        const media = document.createElement('span');
+        media.className = 'social-media';
+        const placeholder = document.createElement('span');
+        placeholder.className = 'social-ph';
+        placeholder.setAttribute('aria-hidden', 'true');
+        placeholder.innerHTML = PLAY;
+        media.append(placeholder);
+
+        if (/^https:\/\//.test(thumb)) {
+          const img = document.createElement('img');
+          img.src = thumb;
+          img.alt = '';
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.addEventListener('error', () => img.remove());
+          media.append(img);
+        }
+        const badge = document.createElement('span');
+        badge.className = 'social-badge';
+        badge.textContent = 'Instagram';
+        media.append(badge);
+        link.append(media);
+
+        const li = document.createElement('li');
+        li.append(link);
+        grid.append(li);
+      }
+
+      // A hand-added post that is also in the feed, but not among the latest, is dropped.
+      manual.forEach((li, code) => {
+        if (feedCodes.has(code) && !placed.has(code)) li.remove();
+      });
+      while (grid.children.length > limit) grid.lastElementChild?.remove();
+
+      if (grid.children.length > 0) section.hidden = false;
+    } catch {
+      /* feed unavailable: nothing is shown */
+    }
+  });
+</script>

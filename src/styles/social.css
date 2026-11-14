@@ -6,7 +6,7 @@
   margin: 0;
   padding: 0;
 }
-.social-grid--instagram { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.social-grid--instagram { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .social-grid--linkedin { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 
 .social-card {
@@ -23,7 +23,7 @@
   background: var(--ink-2, #0e0e0e);
   transition: border-color 0.25s ease, transform 0.25s ease;
 }
-.social-card--instagram .social-media { aspect-ratio: 9 / 16; }
+.social-card--instagram .social-media { aspect-ratio: 4 / 5; }
 .social-card--linkedin .social-media { aspect-ratio: 16 / 10; }
 .social-card:hover .social-media,
 .social-card:focus-visible .social-media {
@@ -64,8 +64,8 @@
 
 .social-badge {
   position: absolute;
-  left: 0.6rem;
-  bottom: 0.6rem;
+  top: 0.6rem;
+  right: 0.6rem;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
   background: var(--signal, #e3262e);
@@ -139,3 +139,8 @@
   .social-card:hover .social-media, .social-card:focus-visible .social-media { transform: none; }
   .sv-stage[data-state='loading']::after { animation: none; }
 }
+
+/* Feed-loaded cards use a plain image; sections stay hidden until they have something to show. */
+.social-media > img { position: absolute; inset: 0; }
+section[hidden] { display: none !important; }
+.social-block:has(> section[hidden]) { display: none; }
