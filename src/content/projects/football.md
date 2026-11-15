@@ -1,6 +1,6 @@
 ---
 title: Football
-draft: false
+draft: true
 description: I have attended various football fixtures across the country
   alongside media professionals which helped to gain a valuable experience and
   insight into the sports industry. Understanding how media teams and on-site
