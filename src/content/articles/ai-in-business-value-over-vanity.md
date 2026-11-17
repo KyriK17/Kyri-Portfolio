@@ -18,7 +18,9 @@ The show boasted 25,000+ visitors, 500+ exhibitors, 200+ speakers and 90 hours o
 
 The organisers pitched the event to smaller firms who wanted to grow, stand out and develop. This was made possible through international networking as well as a speed networking hub designed for attendees to “meet a high volume of relevant contacts in a short period of time”. The high concentration of SMEs at the event helps to explain why AI features so heavily. AI promises high volumes of work for a lower cost.
 
-The seminar programme gives an insight into how businesses are approaching AI. One session explored the realistic capabilities of AI and where the hype outpaces reality. It aimed to provide attendees with a better understanding of the AI framework and a clearer picture on the future of the technology ultimately helping to determine whether their AI investment will pay off. “The question is no longer whether AI will affect your business. It already is.” - Jay Skipworth, CEO – GlluzTech
+The seminar programme gives an insight into how businesses are approaching AI. One session explored the realistic capabilities of AI and where the hype outpaces reality. It aimed to provide attendees with a better understanding of the AI framework and a clearer picture on the future of the technology ultimately helping to determine whether their AI investment will pay off. 
+
+> “The question is no longer whether AI will affect your business. It already is.” - Jay Skipworth, CEO – GlluzTech
 
 Another session was shaped around the idea that AI can level the playing field for SMEs. I believe there is a catch in that promise. If a tool is easily accessible by every business, then that tool alone stops being the point of difference in a competitive market.
 
