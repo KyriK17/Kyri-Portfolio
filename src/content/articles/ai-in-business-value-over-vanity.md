@@ -1,5 +1,5 @@
 ---
-title: AI in business, value over vanity
+title: AI in business, value over vanity?
 draft: false
 date: 2026-11-17
 author: Kyri Kyriacou
