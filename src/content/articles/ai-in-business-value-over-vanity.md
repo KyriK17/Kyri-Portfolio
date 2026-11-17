@@ -8,7 +8,7 @@ tags:
   - Business
   - AI
   - London
-image: /uploads/IMG_20261111_141949.jpg
+image: /uploads/IMG_20261111_142058v2.jpg
 excerpt: I attended The Business Show London to understand where AI’s
   implementation is suitable and where it’s just a label.
 featured: true
