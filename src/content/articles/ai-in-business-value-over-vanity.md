@@ -24,7 +24,8 @@ The organisers pitched the event to smaller firms who wanted to grow, stand out 
 The seminar programme gives an insight into how businesses are approaching AI. One session explored the realistic capabilities of AI and where the hype outpaces reality. It aimed to provide attendees with a better understanding of the AI framework and a clearer picture on the future of the technology ultimately helping to determine whether their AI investment will pay off.
 
 > “The question is no longer whether AI will affect your business. It already is.”
-> - Jay Skipworth, CEO – GlluzTech
+>
+> * Jay Skipworth, CEO – GlluzTech
 
 Another session was shaped around the idea that AI can level the playing field for SMEs. I believe there is a catch in that promise. If a tool is easily accessible by every business, then that tool alone stops being the point of difference in a competitive market.
 
@@ -60,6 +61,6 @@ In digital banking, fraudsters are using AI-powered software to create synthetic
 
 Policing and security are where the debate is sharpest. In January 2026, the Home Office announced plans to increase the number of live facial recognition vans available to police in England and Wales from 10 to 50, and a UK court has ruled that live facial recognition can be deployed nationwide. Those in favour of the decisions say it helps police to locate wanted suspects yet critics raise concerns over privacy and data protection.
 
-## Three uses, one evaluation
+## My evaluation
 
 OpenAI is built on AI, Nvidia depends on it, it enhances TikTok, and Revolut needs to protect against it. In all three cases, the point is that the value of AI is based on its purpose: it is the product, it helps to enhance an existing process, or it responds to a threat. Where it does none of these, it is nothing but a label. This is especially important for the SMEs at ExCeL London, as the technology available to everybody cannot differentiate a business from its competitors by itself; its implementation is key.
