@@ -8,7 +8,9 @@ tags:
   - Business
   - AI
   - London
-featured: false
+excerpt: I attended the Business Show London to understand where AI’s
+  implementation is suitable and where it’s just a label.
+featured: true
 ---
 Attend any business event, conference or masterclass and you’ll be immersed in conversations, presentations and plans all surrounding the same two letters, AI. There is a snowballing number of AI start-ups whilst businesses of all sizes are attempting to embed the technology into what they do. At the Business Show London, held at ExCeL London from 11-12 November 2026, I wanted to understand where AI’s implementation is suitable and where it’s just a label.
 
